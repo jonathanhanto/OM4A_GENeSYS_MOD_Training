@@ -79,6 +79,16 @@ function genesysmod_bounds(model,Sets,Subsets,Params,Settings,Switch)
                         Params.VariableCost[r,t,m,y] = 0.01
     end end end end end 
 
+   
+    for r ∈ Sets.Region_full for rr ∈ Sets.Region_full
+        if Params.TradeCapacity[Sets.Year[1],"H2",r,rr] <= 0 && Params.TradeRoute[Sets.Year[1],"H2",r,rr] >= 0
+            Params.TradeCapacity[Sets.Year[1],"H2",r,rr] = 1
+            println(Params.TradeCapacity[Sets.Year[1],"H2",r,rr])
+        elseif Params.TradeCapacity[Sets.Year[1],"Gas_Natural",r,rr] <= 0  && Params.TradeRoute[Sets.Year[1],"H2",r,rr] >= 0
+            Params.TradeCapacity[Sets.Year[1],"Gas_Natural",r,rr] = 10
+        end
+    end end
+
     #
     # ####### Dummy-Technologies [enable for test purposes, if model runs infeasible] #############
     #

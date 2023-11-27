@@ -368,17 +368,19 @@ function genesysmod_equ(model,Sets,Subsets,Params,Emp_Sets,Settings,Switch)
   ############### Trade Capacities & Investments #############
   
   for i ∈ eachindex(𝓨) for r ∈ 𝓡 for rr ∈ 𝓡
-    if Params.TradeRoute[𝓨[i],"Power",rr,r] > 0
-      for l ∈ 𝓛
-        @constraint(model, (model[:Import][𝓨[i],l,"Power",r,rr]) <= model[:TotalTradeCapacity][𝓨[i],"Power",rr,r]*Params.YearSplit[l,𝓨[i]]*31.536 , base_name="TrC1_TradeCapacityPowerLinesImport_$(𝓨[i])_$(l)_Power_$(r)_$(rr)")
+    for f ∈ Subsets.TradeCapacities
+      if Params.TradeRoute[𝓨[i],f,rr,r] > 0
+        for l ∈ 𝓛
+          @constraint(model, (model[:Import][𝓨[i],l,f,r,rr]) <= model[:TotalTradeCapacity][𝓨[i],f,rr,r]*Params.YearSplit[l,𝓨[i]]*31.536 , base_name="TrC1_TradeCapacityPowerLinesImport_$(𝓨[i])_$(l)_Power_$(r)_$(rr)")
+        end
       end
-    end
-    if Params.TradeRoute[𝓨[i],"Power",r,rr] > 0
-      for l ∈ 𝓛
-        @constraint(model, (model[:Export][𝓨[i],l,"Power",r,rr]) <= model[:TotalTradeCapacity][𝓨[i],"Power",r,rr]*Params.YearSplit[l,𝓨[i]]*31.536 , base_name="TrC1_TradeCapacityPowerLinesExport_$(𝓨[i])_$(l)_Power_$(r)_$(rr)")
+      if Params.TradeRoute[𝓨[i],f,r,rr] > 0
+        for l ∈ 𝓛
+          @constraint(model, (model[:Export][𝓨[i],l,f,r,rr]) <= model[:TotalTradeCapacity][𝓨[i],f,r,rr]*Params.YearSplit[l,𝓨[i]]*31.536 , base_name="TrC1_TradeCapacityPowerLinesExport_$(𝓨[i])_$(l)_Power_$(r)_$(rr)")
+        end
+        @constraint(model, model[:NewTradeCapacity][𝓨[i],f,r,rr]*Params.TradeCapacityGrowthCosts[f,r,rr]*Params.TradeRoute[𝓨[i],f,r,rr] == model[:NewTradeCapacityCosts][𝓨[i],f,r,rr], base_name="TrC4_NewTradeCapacityCosts_$(𝓨[i])_Power_$(r)_$(rr)")
+        @constraint(model, model[:NewTradeCapacityCosts][𝓨[i],f,r,rr]/((1+Settings.GeneralDiscountRate[r])^(𝓨[i]-Switch.StartYear+0.5)) == model[:DiscountedNewTradeCapacityCosts][𝓨[i],f,r,rr], base_name="TrC5_DiscountedNewTradeCapacityCosts_$(𝓨[i])_Power_$(r)_$(rr)")
       end
-      @constraint(model, model[:NewTradeCapacity][𝓨[i],"Power",r,rr]*Params.TradeCapacityGrowthCosts["Power",r,rr]*Params.TradeRoute[𝓨[i],"Power",r,rr] == model[:NewTradeCapacityCosts][𝓨[i],"Power",r,rr], base_name="TrC4_NewTradeCapacityCosts_$(𝓨[i])_Power_$(r)_$(rr)")
-      @constraint(model, model[:NewTradeCapacityCosts][𝓨[i],"Power",r,rr]/((1+Settings.GeneralDiscountRate[r])^(𝓨[i]-Switch.StartYear+0.5)) == model[:DiscountedNewTradeCapacityCosts][𝓨[i],"Power",r,rr], base_name="TrC5_DiscountedNewTradeCapacityCosts_$(𝓨[i])_Power_$(r)_$(rr)")
     end
 
     if Switch.switch_dispatch == 0
@@ -391,27 +393,20 @@ function genesysmod_equ(model,Sets,Subsets,Params,Emp_Sets,Settings,Switch)
             base_name="TrC2b_TotalTradeCapacity_$(𝓨[i])_$(f)_$(r)_$(rr)")
           end
 
-          if f == "Power" && i > 1 && Params.GrowthRateTradeCapacity[𝓨[i],f,r,rr] > 0 
+          if f ∈ Subsets.TradeCapacities && i > 1 && Params.GrowthRateTradeCapacity[𝓨[i],f,r,rr] > 0 
             @constraint(model, (Params.GrowthRateTradeCapacity[𝓨[i],f,r,rr]*YearlyDifferenceMultiplier(𝓨[i],Sets))*model[:TotalTradeCapacity][𝓨[i-1],f,r,rr] >= model[:NewTradeCapacity][𝓨[i],f,r,rr], 
-            base_name="TrC3_NewTradeCapacityLimitPowerLines_$(𝓨[i])_Power_$(r)_$(rr)")
+            base_name="TrC3_NewTradeCapacityLimit_$(𝓨[i])_f_$(r)_$(rr)")         
           end
+        end
+
+        if f ∉ Subsets.TradeCapacities || Params.GrowthRateTradeCapacity[𝓨[i],f,r,rr] == 0 || Params.TradeRoute[𝓨[i],f,r,rr] == 0
+          JuMP.fix(model[:NewTradeCapacity][𝓨[i],f,r,rr],0; force=true)
+          JuMP.fix(model[:DiscountedNewTradeCapacityCosts][𝓨[i],f,r,rr],0; force=true)
         end
       end
     end
+  end end end
 
-    if Params.TradeRoute[𝓨[i],"Power",r,rr] == 0 || Params.GrowthRateTradeCapacity[𝓨[i],"Power",r,rr] == 0
-      JuMP.fix(model[:NewTradeCapacity][𝓨[i],"Power",r,rr],0; force=true)
-    end
-
-    for f ∈ 𝓕
-      if f != "Power" 
-        JuMP.fix(model[:NewTradeCapacity][𝓨[i],f,r,rr],0; force=true)
-      end
-      if Params.TradeRoute[𝓨[i],f,r,rr] == 0 || f != "Power"
-        JuMP.fix(model[:DiscountedNewTradeCapacityCosts][𝓨[i],f,r,rr],0; force=true)
-      end
-    end
-  end end end #end
 
   ############### Trading Costs #############
 

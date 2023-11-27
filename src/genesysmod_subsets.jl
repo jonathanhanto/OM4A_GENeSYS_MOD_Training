@@ -863,12 +863,18 @@ function make_subsets(Sets)
     "Infeasibility_Mob_Passenger",
     "Infeasibility_Mob_Freight"
     ]
+
+    TradeCapacities = [
+        "Power",
+        "Gas_Natural",
+        "H2"
+    ]
     
     Subsets=SubsetsIni(Solar,Wind,Renewables, CCS, Transformation,RenewableTransformation,FossilFuelGeneration,
     FossilFuels,FossilPower,CHPs,RenewableTransport,Transport,Passenger,Freight,TransportFuels,
     ImportTechnology,Heat,PowerSupply,PowerBiomass,Coal,Lignite,Gas,StorageDummies,SectorCoupling,
     HeatFuels,ModalGroups,PhaseInSet,PhaseOutSet,HeatSlowRamper,HeatQuickRamper,Hydro,Geothermal,Onshore,
-    Offshore,SolarUtility,Oil,HeatLowRes,HeatLowInd,HeatMedInd,HeatHighInd,Biomass,Households,Companies,HydrogenTechnologies,DummyTechnology)
+    Offshore,SolarUtility,Oil,HeatLowRes,HeatLowInd,HeatMedInd,HeatHighInd,Biomass,Households,Companies,HydrogenTechnologies,DummyTechnology, TradeCapacities)
 
     return Subsets
 end
