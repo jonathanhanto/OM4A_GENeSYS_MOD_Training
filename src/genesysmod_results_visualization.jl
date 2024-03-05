@@ -268,7 +268,7 @@ function visualize(result_dir, production, capacities, emissions)
     first(dfp, 5)
     #group technologies
     df=dfp
-    function group_technologies(df)
+    function group_technologies_capacities(df)
         df[!, :Technology_grouped] = df[!, :Technology]
 
         # Grouping technologies
@@ -391,7 +391,7 @@ function visualize(result_dir, production, capacities, emissions)
         return df
     end
 
-    group_technologies(df)
+    group_technologies_capacities(df)
 
     # Print the resulting DataFrame
     #println(df)
@@ -499,7 +499,7 @@ function visualize(result_dir, production, capacities, emissions)
     first(dfp, 5)
     #group technologies
     df=dfp
-    function group_technologies(df)
+    function group_technologies_emissions(df)
         df[!, :Technology_grouped] = df[!, :Technology]
 
         # Grouping technologies
@@ -622,7 +622,7 @@ function visualize(result_dir, production, capacities, emissions)
         return df
     end
 
-    group_technologies(df)
+    group_technologies_emissions(df)
 
     # Print the resulting DataFrame
     #println(df)
