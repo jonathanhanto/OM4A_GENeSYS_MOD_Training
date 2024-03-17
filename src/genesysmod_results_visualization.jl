@@ -170,7 +170,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
         dfp, unknown_technologies = group_technologies(dfp)
 
         if !isempty(unknown_technologies)
-            println("Warning: The following technologies are not recognized and will not be included in further processing: ", unknown_technologies)
+            println("Warning: The following technologies are not recognized and will not be included in further processing for Power Production visualization: ", unknown_technologies)
             
             # Filter out rows with unknown technologies
             dfp = filter(row -> !(row.Technology in unknown_technologies), dfp)
@@ -407,7 +407,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
     dfp, unknown_technologies = group_technologies_capacities(dfp)
 
     if !isempty(unknown_technologies)
-        println("Warning: The following technologies are not recognized and will not be included in further processing: ", unknown_technologies)
+        println("Warning: The following technologies are not recognized and will not be included in further processing for Capacities visualization: ", unknown_technologies)
         
         # Filter out rows with unknown technologies
         dfp = filter(row -> !(row.Technology in unknown_technologies), dfp)
@@ -637,18 +637,27 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
                 "PSNG_Air_Bio" => "Demand [Industry]"######
             )
 
-            for key in keys(replacements)
+            known_technologies = intersect(keys(replacements), unique(dfp.Technology))
+
+
+            for key in known_technologies
                 df[!, :Technology_grouped] = replace(df[!, :Technology_grouped], key => replacements[key])
             end
 
-            return df
+
+            return df, setdiff(unique(dfp.Technology), known_technologies)
         end
 
-        group_technologies_emissions(df)
 
-        # Print the resulting DataFrame
-        #println(df)
-        dfp=df 
+        dfp, unknown_technologies = group_technologies_emissions(dfp)
+
+
+        if !isempty(unknown_technologies)
+            println("Warning: The following technologies are not recognized and will not be included in further processing for Emissions visualization: ", unknown_technologies)
+           
+            # Filter out rows with unknown technologies
+            dfp = filter(row -> !(row.Technology in unknown_technologies), dfp)
+        end
 
 
         ############
@@ -894,7 +903,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
         dfp_dispatch, unknown_technologies = group_technologies_dispatch(dfp_dispatch)
 
         if !isempty(unknown_technologies)
-            println("Warning: The following technologies are not recognized and will not be included in further processing: ", unknown_technologies)
+            println("Warning: The following technologies are not recognized and will not be included in further processing for Dispatch visualization: ", unknown_technologies)
             
             # Filter out rows with unknown technologies
             dfp_dispatch = filter(row -> !(row.Technology in unknown_technologies), dfp_dispatch)
