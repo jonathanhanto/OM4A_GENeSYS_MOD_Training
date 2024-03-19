@@ -74,6 +74,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
                 "RES_Hydro_Large" => "Hydropower",
                 "RES_Grass" => "Biomass", ###
                 "RES_Residues" => "Biomass", ###
+                "RES_Paper_Cardboard" => "Biomass", ###
                 "RES_Wood" => "Biomass", ###
                 "P_Coal_Lignite" => "Lignite",
                 "P_Oil" => "Oil",
@@ -309,6 +310,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
                 "RES_Hydro_Small" => "Hydropower",
                 "RES_Hydro_Large" => "Hydropower",
                 "RES_Grass" => "Biomass", ###
+                "RES_Paper_Cardboard" => "Biomass", ###
                 "RES_Residues" => "Biomass", ###
                 "RES_Wood" => "Biomass", ###
                 "P_Coal_Lignite" => "Lignite",
@@ -493,8 +495,8 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
             bar_position = :stack,
             bar_width = 0.8,
             xlabel = "Year",
-            ylabel = "MW",
-            title = "Installed Capacity [MW]",
+            ylabel = "GW",
+            title = "Installed Capacity [GW]",
             size = (800, 750),
             legend = :topleft,
             color = [filtered_tech_colors[group] for group in grouped_df.Technology_grouped]
@@ -759,7 +761,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
     if dispatch !== nothing     
 
         # Read the CSV file into a DataFrame
-        #dfp_dispatch = CSV.read("/Users/dozeumhaj/Documents/OM4A_Run/Results/output_production_MiddleEarth_Gondor_globalLimit_122_dispatch.csv", DataFrame)
+        #dfp_dispatch = CSV.read("/Users/dozeumhaj/Documents/OM4A_Run/Results/output_production_MiddleEarth_Isengard_globalLimit_1444_dispatch.csv", DataFrame)
        
 
         dfp_dispatch=CSV.read(joinpath(result_dir,dispatch), DataFrame)
@@ -804,6 +806,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
                 "RES_Hydro_Large" => "Hydropower",
                 "RES_Grass" => "Biomass", ###
                 "RES_Residues" => "Biomass", ###
+                "RES_Paper_Cardboard" => "Biomass", ###
                 "RES_Wood" => "Biomass", ###
                 "P_Coal_Lignite" => "Lignite",
                 "P_Oil" => "Oil",
@@ -831,6 +834,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
                 "FRT_Road_PHEV" => "Demand [Transport]",
                 "FRT_Road_OH" => "Demand [Transport]",
                 "FRT_Ship_EL" => "Demand [Transport]",
+                "FRT_Road_H2" => "Demand [Transport]",
                 "FRT_Ship_Bio" => "Demand [Transport]",
                 "FRT_Ship_Conv" => "Demand [Transport]",
                 "PSNG_Rail_Electric" => "Demand [Transport]",
@@ -882,9 +886,10 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
                 "R_Coal_Hardcoal" => "Demand [Industry]",######
                 "Resource" => "Resource",######
                 "HHI_Bio_BF_BOF" => "Demand [Industry]",######
-                "CHP_Biomass_Solid" => "Demand [Industry]",######
+                "CHP_Biomass_Solid" => "Biomass",######
                 "HLI_Oil_Boiler" => "Demand [Industry]",######
                 "HLR_Oil_Boiler" => "Demand [Industry]",######
+                "HMI_Oil" => "Demand [Industry]",######
                 "PSNG_Air_Bio" => "Demand [Industry]",######
                 "X_Powerfuel" => "Demand [Industry]",######
                 "HHI_H2DRI_EAF" => "Demand [Industry]",######
@@ -934,11 +939,10 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
         dfp_elec = combine(groupby(dfp_dispatch, [:Year, :Fuel, :Timeslice, :Type, :Technology_grouped]), :Value_twh => sum)
 
         # Filter for Power production
-        dfp_elec = combine(groupby(filter(row -> row.Year == 2025 && row.Fuel == "Power" && row.Type == "Production", dfp_dispatch), [:Year, :Fuel, :Timeslice, :Type, :Technology_grouped]), :Value_twh => sum)
-
+        dfp_elec = combine(groupby(filter(row -> row.Year == 2050 && row.Fuel == "Power" && row.Type == "Production", dfp_dispatch), [:Year, :Fuel, :Timeslice, :Type, :Technology_grouped]), :Value_twh => sum)
         # Convert Technology_grouped column to CategoricalArray with desired order
         dfp_elec[!, :Technology_grouped] = CategoricalArray(dfp_elec.Technology_grouped, ordered=true, levels=technology_order)
-
+        
         # Group by year and technology group
         grouped_df = combine(groupby(dfp_elec, [:Timeslice, :Technology_grouped]), :Value_twh_sum => sum)
 
