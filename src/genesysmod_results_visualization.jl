@@ -51,6 +51,9 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
                 "D_Battery_Li-Ion" => "Storages",
                 "D_PHS" => "Storages",
                 "D_PHS_Residual" => "Storages",
+                "D_Gas_H2" => "Storages",
+                "D_Heat_HLR" => "Storages",
+                "D_Heat_HLI" => "Storages",
                 "HLI_Biomass_CHP" => "Biomass",
                 "HLI_Biomass" => "Biomass",
                 "HLR_Biomass" => "Biomass",
@@ -180,6 +183,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
     ############
     # Define the desired order of technologies for stacking
     technology_order = [
+        "Storages",
         "H2",
         "Solar PV",
         "Wind Offshore",
@@ -226,7 +230,8 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
         "Demand [Industry]" => "#a39794",
         "Demand [Transport]" => "#57606c",
         "Gas" => "#e54213",
-        "H2" => "#26c6da"
+        "H2" => "#26c6da",
+        "Storages" => "#b07aa1"
     )
 
 
@@ -288,6 +293,9 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
                 "D_Battery_Li-Ion" => "Storages",
                 "D_PHS" => "Storages",
                 "D_PHS_Residual" => "Storages",
+                "D_Gas_H2" => "Storages", 
+                "D_Heat_HLI" => "Storages", 
+                "D_Heat_HLR"=> "Storages",
                 "HLI_Biomass_CHP" => "Biomass",
                 "HLI_Biomass" => "Biomass",
                 "HLR_Biomass" => "Biomass",
@@ -783,6 +791,9 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
                 "D_Battery_Li-Ion" => "Storages",
                 "D_PHS" => "Storages",
                 "D_PHS_Residual" => "Storages",
+                "D_Gas_H2" => "Storages",
+                "D_Heat_HLR" => "Storages",
+                "D_Heat_HLI" => "Storages",
                 "HLI_Biomass_CHP" => "Biomass",
                 "HLI_Biomass" => "Biomass",
                 "HLR_Biomass" => "Biomass",
@@ -888,6 +899,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
                 "HHI_Bio_BF_BOF" => "Demand [Industry]",######
                 "CHP_Biomass_Solid" => "Biomass",######
                 "HLI_Oil_Boiler" => "Demand [Industry]",######
+                "HLR_Geothermal" => "Demand [Buildings]",
                 "HLR_Oil_Boiler" => "Demand [Industry]",######
                 "HMI_Oil" => "Demand [Industry]",######
                 "PSNG_Air_Bio" => "Demand [Industry]",######
@@ -916,6 +928,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
 
         # Define the desired order of technologies for stacking
         technology_order = [
+            "Storages",
             "H2",
             "Solar PV",
             "Wind Offshore",
@@ -943,6 +956,25 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
         # Convert Technology_grouped column to CategoricalArray with desired order
         dfp_elec[!, :Technology_grouped] = CategoricalArray(dfp_elec.Technology_grouped, ordered=true, levels=technology_order)
         
+        tech_colors = Dict(
+            "Storages" => "#b07aa1",
+            "H2" => "#26c6da",
+            "Solar PV" => "#ffeb3b",
+            "Wind Offshore" => "#215968",
+            "Wind Onshore" => "#518696",
+            "Biomass" => "#7cb342",
+            "Hydropower" => "#0c46a0",
+            "Ocean" => "#a0cbe8",
+            "Nuclear" => "#ae393f",
+            "Oil" => "#252623",
+            "Electrolysis" => "#28dddd",
+            "Demand [Buildings]" => "#c3b4b2",
+            "Demand [Industry]" => "#a39794",
+            "Demand [Transport]" => "#145b71",
+            "Gas" => "#e54213",
+            "Lignite" => "#754937",
+            "Hardcoal" => "#5e5048",
+        )
         # Group by year and technology group
         grouped_df = combine(groupby(dfp_elec, [:Timeslice, :Technology_grouped]), :Value_twh_sum => sum)
 
@@ -962,24 +994,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
         # Filtered technology groups
         filtered_technology_groups = filter(group -> group in technology_order, unique(grouped_df.Technology_grouped))
 
-        tech_colors = Dict(
-            "Solar PV" => "#ffeb3b",
-            "Wind Offshore" => "#215968",
-            "Wind Onshore" => "#518696",
-            "Biomass" => "#7cb342",
-            "Hydropower" => "#0c46a0",
-            "Ocean" => "#a0cbe8",
-            "Nuclear" => "#ae393f",
-            "Oil" => "#252623",
-            "Lignite" => "#754937",
-            "Hardcoal" => "#5e5048",
-            "Electrolysis" => "#28dddd",
-            "Demand [Buildings]" => "#c3b4b2",
-            "Demand [Industry]" => "#a39794",
-            "Demand [Transport]" => "#a39794",
-            "Gas" => "#e54213",
-            "H2" => "#26c6da"
-        )
+    
         # Assign colors based on the filtered technology groups
         filtered_tech_colors = Dict(group => get(tech_colors, group, :auto) for group in filtered_technology_groups)
 
@@ -997,7 +1012,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
             legend = :topleft,
             lw = 0,
             xrotation = 90,
-            color = [get(filtered_tech_colors, group, :auto) for group in grouped_df_sorted.Technology_grouped]
+            color = [get(filtered_tech_colors, group, :auto) for group in grouped_df_sorted.Technology_grouped],
         )
 
         # Display the plot
@@ -1008,13 +1023,4 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
         error("Error: Need at least one of the following arguments as input: ['production', 'capacities', 'emissions', 'dispatch'].")
     end
 
-
-    
-    # # Display the plot
-    # display(bar_plot_capacities)
-    # display(bar_plot_emissions)
-
-    # if dispatch !== nothing
-    #     display(bar_plot_dispatch)
-    # end
 end
