@@ -49,6 +49,9 @@ function genesysmod_settings(Sets, Params, socialdiscountrate)
         if f == "Air"
             ProductionGrowthLimit[y,f] = Float64(0.025)
         end
+        if f == "Cooking"
+            ProductionGrowthLimit[y,f] = Float64(0.05)
+        end
     end end
     StorageLimitOffset = Float64(0.015)
 

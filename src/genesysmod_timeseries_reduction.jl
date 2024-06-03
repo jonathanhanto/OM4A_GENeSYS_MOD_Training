@@ -63,6 +63,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
 
     Country_Data_Entries=[
     "LOAD",
+    "COOKING",
     "PV_AVG", "PV_INF", "PV_OPT",
     "WIND_ONSHORE_AVG", "WIND_ONSHORE_INF", "WIND_ONSHORE_OPT",
     "WIND_OFFSHORE","WIND_OFFSHORE_SHALLOW","WIND_OFFSHORE_DEEP",
@@ -77,6 +78,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
     hourly_data = XLSX.readxlsx(joinpath(Switch.inputdir, Switch.hourly_data_file * ".xlsx"))
 
     CountryData_Load = DataFrame(XLSX.gettable(hourly_data["TS_LOAD"]))
+    CountryData_Cooking = DataFrame(XLSX.gettable(hourly_data["TS_COOKING"]))
     CountryData_PV_Avg = DataFrame(XLSX.gettable(hourly_data["TS_PV_AVG"]))
     CountryData_PV_Inf = DataFrame(XLSX.gettable(hourly_data["TS_PV_INF"]))
     CountryData_PV_Opt = DataFrame(XLSX.gettable(hourly_data["TS_PV_OPT"]))
@@ -95,6 +97,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
     CountryData_Hydro_RoR = DataFrame(XLSX.gettable(hourly_data["TS_HYDRO_ROR"]))
 
     CountryData["LOAD"] = CountryData_Load
+    CountryData["COOKING"] = CountryData_Cooking
     CountryData["PV_AVG"] = CountryData_PV_Avg
     CountryData["PV_INF"] = CountryData_PV_Inf
     CountryData["PV_OPT"] = CountryData_PV_Opt
@@ -132,6 +135,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
         df_peakingDemand["Buildings"] = combine(CountryData["HEAT_LOW"], names(CountryData["HEAT_LOW"]) .=> maximum, renamecols=false) ./ x_averageTimeSeriesValue["HEAT_LOW"]
         df_peakingDemand["Transportation"] = combine(CountryData["MOBILITY_PSNG"], names(CountryData["MOBILITY_PSNG"]) .=> maximum, renamecols=false) ./ x_averageTimeSeriesValue["MOBILITY_PSNG"]
         df_peakingDemand["Power"] = combine(CountryData["LOAD"], names(CountryData["LOAD"]) .=> maximum, renamecols=false) ./ x_averageTimeSeriesValue["LOAD"]
+        df_peakingDemand["Cooking"] = combine(CountryData["COOKING"], names(CountryData["COOKING"]) .=> maximum, renamecols=false) ./ x_averageTimeSeriesValue["COOKING"]
     end
 
     x_peakingDemand = JuMP.Containers.DenseAxisArray(zeros(length(Sets.Region_full), length(Sets.Sector)),Sets.Region_full, Sets.Sector)
@@ -140,6 +144,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
         x_peakingDemand[r,"Buildings"] = df_peakingDemand["Buildings"][1,r]
         x_peakingDemand[r,"Transportation"] = df_peakingDemand["Transportation"][1,r]
         x_peakingDemand[r,"Power"] = df_peakingDemand["Power"][1,r]
+        x_peakingDemand[r,"Cooking"] = df_peakingDemand["Cooking"][1,r]
     end
 
     negativeCDE = Dict(x => mapcols(col -> min.(col,0), CountryData[x]) for x ∈ Country_Data_Entries)
@@ -185,6 +190,11 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
         end
         CountryData["LOAD"][!,r] = CountryData["LOAD"][!,r] / AverageCapacityFactor["LOAD"][1,r]
 
+        if sum(CountryData["COOKING"][l,r] for l ∈ Timeslice) != 0 
+            AverageCapacityFactor["COOKING"][1,r] = sum(CountryData["COOKING"][:,r])/8760
+        end
+        CountryData["COOKING"][!,r] = CountryData["COOKING"][!,r] / AverageCapacityFactor["COOKING"][1,r]
+
         if sum(CountryData["HEAT_LOW"][l,r] for l ∈ Timeslice) != 0 
             AverageCapacityFactor["HEAT_LOW"][1,r] = sum(CountryData["HEAT_LOW"][:,r])/8760
         end
@@ -199,6 +209,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
 
     smoothing_range = Dict()
     smoothing_range["LOAD"] = 3
+    smoothing_range["COOKING"] = 3
     smoothing_range["PV_INF"] = 1
     smoothing_range["WIND_ONSHORE_INF"] = 2
     smoothing_range["PV_AVG"] = 1
@@ -230,6 +241,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
     # Every 25th hour
     if length(Timeslice) == 374
         smoothing_range["LOAD"] = 3
+        smoothing_range["COOKING"] = 3
         smoothing_range["PV_INF"] = 1
         smoothing_range["WIND_ONSHORE_INF"] = 4
         smoothing_range["PV_AVG"] = 1
@@ -251,6 +263,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
     # Every 49th hour
     if length(Timeslice) == 191
         smoothing_range["LOAD"] = 3
+        smoothing_range["COOKING"] = 3
         smoothing_range["PV_INF"] = 1
         smoothing_range["WIND_ONSHORE_INF"] = 3
         smoothing_range["PV_AVG"] = 1
@@ -363,7 +376,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
 
     YearSplit = JuMP.Containers.DenseAxisArray(ones(length(Timeslice), length(Sets.Year)) * 1/length(Timeslice), Timeslice, Sets.Year)
 
-    sdp_list=["Power","Mobility_Passenger","Mobility_Freight","Heat_Low_Residential","Heat_Low_Industrial","Heat_Medium_Industrial","Heat_High_Industrial"]
+    sdp_list=["Power","Cooking","Mobility_Passenger","Mobility_Freight","Heat_Low_Residential","Heat_Low_Industrial","Heat_Medium_Industrial","Heat_High_Industrial"]
     capf_list=["HLR_Heatpump_Aerial","HLR_Heatpump_Ground","RES_PV_Utility_Opt","RES_Wind_Onshore_Opt","RES_Wind_Offshore_Transitional","RES_Wind_Onshore_Avg","RES_Wind_Offshore_Shallow","RES_PV_Utility_Inf",
     "RES_Wind_Onshore_Inf","RES_Wind_Offshore_Deep","RES_PV_Utility_Tracking","RES_Hydro_Small"]
 
@@ -386,6 +399,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
 
     for r ∈ Sets.Region_full 
         SpecifiedDemandProfile[r,"Mobility_Passenger",:,Sets.Year[1]] = tmp["MOBILITY_PSNG"][Timeslice,r]
+        #SpecifiedDemandProfile[r,"Cooking",:,Sets.Year[1]] = tmp["COOKING"][Timeslice,r]
         SpecifiedDemandProfile[r,"Mobility_Freight",:,Sets.Year[1]] = tmp["MOBILITY_PSNG"][Timeslice,r]
         SpecifiedDemandProfile[r,"Heat_Low_Residential",:,Sets.Year[1]] = tmp["HEAT_LOW"][Timeslice,r]
         SpecifiedDemandProfile[r,"Heat_Low_Industrial",:,Sets.Year[1]] = tmp["HEAT_HIGH"][Timeslice,r]

@@ -27,7 +27,7 @@ using DataFrames
 using StatsPlots
 using CategoricalArrays
 
-function visualize(result_dir, production, capacities, emissions, dispatch=nothing)
+function visualize(result_dir, production, capacities, emissions, dispatch=nothing, cooking=nothing)
 
     if production !== nothing
         # Read the CSV file into a DataFrame
@@ -41,6 +41,8 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
 
 
         first(dfp, 5)
+
+        #dfp_1 = combine(groupby(filter(row -> row.Fuel == "Power" && row.Type == "Production", dfp), [:Region,:Sector,:Technology, :Fuel, :Type,:Unit,:PathwayScenario,:Year,:Value]), :Value_twh)
         #group technologies
         df=dfp
         function group_technologies(df)
@@ -159,7 +161,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
                 "CHP_Biomass_Solid" => "Biomass",######
                 "HLI_Oil_Boiler" => "Demand [Industry]",######
                 "HLR_Oil_Boiler" => "Demand [Industry]",######
-                "PSNG_Air_Bio" => "Demand [Industry]"######         
+                "PSNG_Air_Bio" => "Demand [Industry]";######       
             )
 
             known_technologies = intersect(keys(replacements), unique(dfp.Technology))
@@ -199,7 +201,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
         "Demand [Transport]",
         "Gas",
         "Lignite",
-        "Hardcoal",
+        "Hardcoal"
     ]
 
     # Convert Technology_grouped column to CategoricalArray with desired order
@@ -231,7 +233,7 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
         "Demand [Transport]" => "#57606c",
         "Gas" => "#e54213",
         "H2" => "#26c6da",
-        "Storages" => "#b07aa1"
+        "Storages" => "#b07aa1";
     )
 
 
@@ -766,6 +768,9 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
     
 
     #######################Dispatch###########################
+    ##########################################################
+    ##########################################################
+    ##########################################################
     if dispatch !== nothing     
 
         # Read the CSV file into a DataFrame
@@ -1019,8 +1024,124 @@ function visualize(result_dir, production, capacities, emissions, dispatch=nothi
         display(bar_plot_dispatch)
     end
 
-    if (production === nothing) & (capacities === nothing) & (emissions === nothing) & (dispatch === nothing)
-        error("Error: Need at least one of the following arguments as input: ['production', 'capacities', 'emissions', 'dispatch'].")
+    ###################COOKING########################
+    ##################################################
+    if cooking !== nothing
+        # Read the CSV file into a DataFrame
+        #dfp_cooking = CSV.read("/Users/dozeumhaj/Documents/OM4A_Run/Results/output_annual_production_MiddleEarth_Gondor_globalLimit_1444_dispatch.csv", DataFrame)
+        dfp_cooking=CSV.read(joinpath(result_dir,cooking), DataFrame)
+
+        # Remove whitespace from column names
+        rename!(dfp, Symbol.(map(x -> strip(string(x)), names(dfp))))  # Convert column names to strings, strip whitespace, and convert back to symbols
+        dfp_cooking[!, :Value_twh] = dfp_cooking.Value / 3.6  # create TWh column
+        # Check the first few rows of the DataFrame to ensure data integrity
+
+
+        first(dfp, 5)
+        #group technologies
+        df_cooking=dfp_cooking
+        # Filter for Power production
+        df_cooking = combine(groupby(filter(row -> row.Fuel == "Cooking" && row.Type == "Production", df_cooking), [:Region,:Technology, :Year, :Fuel]), :Value_twh => sum)
+
+
+
+        function group_technologies_cooking(df_cooking)
+            df_cooking[!, :Technology_grouped_cooking] = df_cooking[!, :Technology]
+
+            # Grouping technologies
+            replacements = Dict(
+                "C_Kerosene_Cookstove" => "Kerosene Cookstove",
+                "C_Open_Firewood" => "Open Firewood",
+                "C_Electric_Cookstove" => "Electric Cookstove"    
+            )
+
+            known_technologies_cooking = intersect(keys(replacements), unique(dfp_cooking.Technology))
+
+            for key in known_technologies_cooking
+                df_cooking[!, :Technology_grouped_cooking] = replace(df_cooking[!, :Technology_grouped_cooking], key => replacements[key])
+            end
+
+            return df_cooking, setdiff(unique(dfp.Technology), known_technologies_cooking)
+        end
+
+        dfp_cooking, unknown_technologies_cooking = group_technologies_cooking(df_cooking)
+
+        if !isempty(unknown_technologies_cooking)
+            println("Warning: The following technologies are not recognized and will not be included in further processing for Power Production visualization: ", unknown_technologies_cooking)
+            
+            # Filter out rows with unknown technologies
+            dfp_cooking = filter(row -> !(row.Technology in unknown_technologies_cooking), dfp_cooking)
+        end
+
+    ############
+    # Define the desired order of technologies for stacking
+    technology_order_cooking = [
+        "Electric Cookstove",
+        "C_Electric_Cookstove",
+        "Kerosene Cookstove",
+        "C_Kerosene_Cookstove",
+        "Open Firewood",
+        "C_Open_Firewood"
+    ]
+
+    # Convert Technology_grouped column to CategoricalArray with desired order
+    dfp_cooking[!, :Technology_grouped_cooking] = CategoricalArray(dfp_cooking.Technology_grouped_cooking, ordered=true, levels=technology_order_cooking)
+    #######
+
+    # Create dataframe for electricity generation figure
+    
+    dfp_cooking = combine(groupby(dfp_cooking, [:Region,:Year, :Fuel, :Technology_grouped_cooking]), :Value_twh_sum => sum)
+        
+    # Filter for Power production
+    #dfp_elec = combine(groupby(filter(row -> row.Fuel == "Cooking" && row.Type == "Production", dfp_elec_1), [:Region,:Year, :Fuel, :Technology_grouped]), :Value_twh_sum_sum => sum)
+
+    show(dfp_cooking, allrows=true, allcols=true)
+
+    tech_colors_cooking = Dict(
+        "Electric Cookstove" => "#ebcf34",
+        "Kerosene Cookstove" => "#2a313d",
+        "Open Firewood" => "#966151"
+    )
+
+
+    ###############################################
+    # Group by year and technology group
+    grouped_df_cooking = combine(groupby(dfp_cooking, [:Region,:Year, :Technology_grouped_cooking]), :Value_twh_sum_sum => sum)
+
+    # Extract unique years and technology groups
+    unique_years = unique(grouped_df_cooking.Year)
+    unique_technology_groups_cooking = unique(grouped_df_cooking.Technology_grouped_cooking)
+
+    # Create filtered color dictionary
+    filtered_tech_colors_cooking = Dict(group_cooking => tech_colors_cooking[group_cooking] for group_cooking in unique_technology_groups_cooking)
+
+    # Convert years to strings for plotting
+    grouped_df_cooking.Year = string.(grouped_df_cooking.Year)
+
+    unique(grouped_df_cooking.Technology_grouped_cooking) 
+    # Create the grouped bar plot
+    bar_plot_cooking = groupedbar(
+        grouped_df_cooking.Year,
+        grouped_df_cooking.Value_twh_sum_sum_sum,
+        group = grouped_df_cooking.Technology_grouped_cooking,
+        bar_position = :stack,
+        bar_width = 0.8,
+        xlabel = "Year",
+        ylabel = "TWh",
+        title = "Cooking [TWh]",
+        size = (900, 800),
+        color = [filtered_tech_colors_cooking[group_cooking] for group_cooking in grouped_df_cooking.Technology_grouped_cooking],
+        legend = true,
+    )
+
+    # Display the plot
+    display(bar_plot_cooking)
+
+    end
+    ######################## Errorcheck ##############
+
+    if (production === nothing) & (capacities === nothing) & (emissions === nothing) & (dispatch === nothing) & (cooking === nothing)
+        error("Error: Need at least one of the following arguments as input: ['production', 'capacities', 'emissions', 'dispatch','cooking'].")
     end
 
 end
