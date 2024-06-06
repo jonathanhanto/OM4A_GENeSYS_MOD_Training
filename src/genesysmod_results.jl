@@ -265,6 +265,7 @@ function genesysmod_results(model,Sets, Params, Vars, VarPar, Switch, Settings, 
                     lc_tot_w_em[r,t,y,f] = lc_cap[r,t,y,f] + lc_gen[r,t,y,f] + lc_em[r,t,y,f]
                     lc_tot_wo_em[r,t,y,f] = lc_cap[r,t,y,f] + lc_gen[r,t,y,f]
                 end
+                
             end
             if  Params.TagTechnologyToSector[t,"Storages"] != 0 && Params.OutputActivityRatio[r,t,"Power",2,y] != 0 && sum(Params.InputActivityRatio[r,t,f,:,y]) != 0
                 lc_tot_st[r,t,y,f] = Params.VariableCost[r,t,1,y]*5
@@ -345,13 +346,13 @@ function genesysmod_results(model,Sets, Params, Vars, VarPar, Switch, Settings, 
     select!(df_tmp,colnames)
     append!(output_technology_costs_detailed, df_tmp)
 
-    df_tmp = convert_jump_container_to_df(lc_tot_st;dim_names=[:Region, :Technology, :Fuel, :Year])
+    df_tmp = convert_jump_container_to_df(lc_tot_st;dim_names=[:Region, :Technology, :Year, :Fuel])
     df_tmp[!,:Type] .= "Levelized Costs [Total]"
     df_tmp[!,:Unit] .= "MEUR/PJ"
     select!(df_tmp,colnames)
     append!(output_technology_costs_detailed, df_tmp)
 
-    df_tmp = convert_jump_container_to_df(lc_tot_st*3.6;dim_names=[:Region, :Technology, :Fuel, :Year])
+    df_tmp = convert_jump_container_to_df(lc_tot_st*3.6;dim_names=[:Region, :Technology, :Year, :Fuel])
     df_tmp[!,:Type] .= "Levelized Costs [Total]"
     df_tmp[!,:Unit] .= "EUR/MWh"
     select!(df_tmp,colnames)
@@ -883,10 +884,10 @@ function genesysmod_results(model,Sets, Params, Vars, VarPar, Switch, Settings, 
     #### Excel Output Sheet Definition and Export of GDX
     ####
 
-    CSV.write(joinpath(Switch.resultdir,"output_production_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_energy_balance[output_energy_balance.Value .!= 0, :])
-    CSV.write(joinpath(Switch.resultdir,"output_annual_production_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_energy_balance_annual[output_energy_balance_annual.Value .!= 0, :])
+    CSV.write(joinpath(Switch.resultdir,"output_energy_balance_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_energy_balance[output_energy_balance.Value .!= 0, :])
+    CSV.write(joinpath(Switch.resultdir,"output_energy_balance_annual_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_energy_balance_annual[output_energy_balance_annual.Value .!= 0, :])
     CSV.write(joinpath(Switch.resultdir,"output_capacity_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_capacity[output_capacity.Value .!= 0, :])
-    CSV.write(joinpath(Switch.resultdir,"output_emission_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_emissions[output_emissions.Value .!= 0, :])
+    CSV.write(joinpath(Switch.resultdir,"output_emissions_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_emissions[output_emissions.Value .!= 0, :])
     CSV.write(joinpath(Switch.resultdir,"output_other_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_other[output_other.Value .!= 0, :])
     CSV.write(joinpath(Switch.resultdir,"output_model_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_model[output_model.Value .!= 0, :])
     CSV.write(joinpath(Switch.resultdir,"output_technology_costs_detailed_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_technology_costs_detailed[output_technology_costs_detailed.Value .!= 0, :])

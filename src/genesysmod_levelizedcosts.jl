@@ -461,7 +461,7 @@ function genesysmod_levelizedcosts(model,Sets, Params, Vars, VarPar, Switch, Set
 
     CSV.write(joinpath(Switch.resultdir,"output_costs_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_costs[output_costs.Value .!= 0,:])
     CSV.write(joinpath(Switch.resultdir,"output_fuelcosts_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_fuelcosts[output_fuelcosts.Value .!= 0,:])
-    CSV.write(joinpath(Switch.resultdir,"output_emissions_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_emissionintensity[output_emissionintensity.Value .!= 0,:])
+    CSV.write(joinpath(Switch.resultdir,"output_emissionintensity_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_emissionintensity[output_emissionintensity.Value .!= 0,:])
 
     return resourcecosts, output_emissionintensity
 end
