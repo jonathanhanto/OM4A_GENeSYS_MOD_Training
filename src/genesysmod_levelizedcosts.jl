@@ -20,7 +20,11 @@
 """
 Internal function used in the run process to compute results related to levelized costs.
 """
+<<<<<<< HEAD
 function genesysmod_levelizedcosts(model,Sets, Params, Vars, VarPar, Switch, Settings, z_fuelcosts, LoopSetOutput, LoopSetInput, extr_str)
+=======
+function genesysmod_levelizedcosts(model,Sets, Params, VarPar, Vars, Switch, Settings, z_fuelcosts, LoopSetOutput, LoopSetInput, extr_str)
+>>>>>>> 450a4e247bba0ecd89888e3aff8921abbd9fd412
     TierTwo = [
     "X_Methanation",
     "X_SMR"]
@@ -96,7 +100,11 @@ function genesysmod_levelizedcosts(model,Sets, Params, Vars, VarPar, Switch, Set
     end end end end end
     TechnologyEmissions = value.(model[:AnnualTechnologyEmission])
     AnnualSectorEmissions = value.(model[:AnnualSectoralEmissions])
+<<<<<<< HEAD
     TechnologyEmissionsByMode = value.(Vars.AnnualTechnologyEmissionByMode)
+=======
+    # TechnologyEmissionsByMode = value.(Vars.AnnualTechnologyEmissionByMode)
+>>>>>>> 450a4e247bba0ecd89888e3aff8921abbd9fd412
 
     CarbonPrice = JuMP.Containers.DenseAxisArray(zeros(length(Sets.Region_full),length(Sets.Emission),length(Sets.Year)), Sets.Region_full, Sets.Emission, Sets.Year)
     for r ∈ Sets.Region_full for y ∈ Sets.Year for e ∈ Sets.Emission
@@ -112,7 +120,11 @@ function genesysmod_levelizedcosts(model,Sets, Params, Vars, VarPar, Switch, Set
         end
     end end end
 
+<<<<<<< HEAD
     SectorEmissions, EmissionIntensity = genesysmod_emissionintensity(model, Sets, Params, Vars, VarPar, TierFive, LoopSetOutput, LoopSetInput)
+=======
+    SectorEmissions, EmissionIntensity = genesysmod_emissionintensity(model, Sets, Params, VarPar, Vars, TierFive, LoopSetOutput, LoopSetInput)
+>>>>>>> 450a4e247bba0ecd89888e3aff8921abbd9fd412
 
     for y ∈ Sets.Year for r ∈ Sets.Region_full for e ∈ Sets.Emission
         for f ∈ Sets.Fuel 
@@ -267,7 +279,7 @@ function genesysmod_levelizedcosts(model,Sets, Params, Vars, VarPar, Switch, Set
     ####
     for r ∈ Sets.Region_full for y ∈ Sets.Year 
         if resourcecosts[r,"H2",y] == 0
-            resourcecosts[r,"H2",y] = levelizedcostsPJ(r,"Z_Import_H2","H2",1,y)
+            resourcecosts[r,"H2",y] = levelizedcostsPJ[r,"Z_Import_H2","H2",1,y]
         end
         if resourcecosts[r,"Biofuel",y] == 0
             resourcecosts[r,"Biofuel",y] = levelizedcostsPJ[r,"X_Biofuel","Biofuel",1,y]
