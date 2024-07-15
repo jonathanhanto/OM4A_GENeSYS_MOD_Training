@@ -1,8 +1,2 @@
 docs/build/
 test/script.jl
-<<<<<<< .merge_file_a17352
-=======
-test/TestData/Results
-debug_scripts
-test/test.jl
->>>>>>> .merge_file_a23616
