@@ -35,7 +35,7 @@ end
 """
 Internal function used in the run process to define the model variables.
 """
-function genesysmod_dec(model,Sets, Params,Switch, Maps)
+function genesysmod_dec(model,Sets, Params,Switch)
 
     𝓡 = Sets.Region_full
     𝓕 = Sets.Fuel
@@ -99,7 +99,6 @@ function genesysmod_dec(model,Sets, Params,Switch, Maps)
     ############### Storage Variables #############
 
     StorageLevelYearStart = @variable(model, StorageLevelYearStart[𝓢,𝓨,𝓡] >= 0, container=JuMP.Containers.DenseAxisArray)
-    StorageLevelYearFinish = @variable(model, StorageLevelYearFinish[𝓢,𝓨,𝓡] >= 0, container=JuMP.Containers.DenseAxisArray)
     StorageLevelTSStart = @variable(model, StorageLevelTSStart[𝓢,𝓨,𝓛,𝓡] >= 0, container=JuMP.Containers.DenseAxisArray)
 
     AccumulatedNewStorageCapacity = @variable(model, AccumulatedNewStorageCapacity[𝓢,𝓨,𝓡] >= 0, container=JuMP.Containers.DenseAxisArray) 
@@ -137,7 +136,7 @@ function genesysmod_dec(model,Sets, Params,Switch, Maps)
 
     AnnualTechnologyEmissionByMode = def_daa(𝓨,𝓣,𝓔,𝓜,𝓡)
     for y ∈ 𝓨 for r ∈ 𝓡 for t ∈ 𝓣 for e ∈ 𝓔 
-        for m ∈ Maps.Tech_MO[t]
+        for m ∈ Sets.Mode_of_operation
             AnnualTechnologyEmissionByMode[y,t,e,m,r] = @variable(model, lower_bound = 0, base_name= "AnnualTechnologyEmissionByMode[$y,$t,$e,$m,$r]")
         end
     end end end end 
@@ -196,7 +195,7 @@ function genesysmod_dec(model,Sets, Params,Switch, Maps)
         ProductionUpChangeInTimeslice = def_daa(𝓨,𝓛,𝓕,𝓣,𝓡)
         ProductionDownChangeInTimeslice = def_daa(𝓨,𝓛,𝓕,𝓣,𝓡)
         for y ∈ 𝓨 for r ∈ 𝓡 for f ∈ 𝓕 for l ∈ 𝓛
-            for t ∈ Maps.Fuel_Tech[f]
+            for t ∈ Sets.Technology
                 ProductionUpChangeInTimeslice[y,l,f,t,r] = @variable(model, lower_bound = 0, base_name= "ProductionUpChangeInTimeslice[$y,$l,$f,$t,$r]")
                 ProductionDownChangeInTimeslice[y,l,f,t,r] = @variable(model, lower_bound = 0, base_name= "ProductionDownChangeInTimeslice[$y,$l,$f,$t,$r]")
             end
@@ -206,8 +205,6 @@ function genesysmod_dec(model,Sets, Params,Switch, Maps)
     else
         ProductionUpChangeInTimeslice=nothing
         ProductionDownChangeInTimeslice=nothing
-        AnnualProductionChangeCost=nothing
-        DiscountedAnnualProductionChangeCost=nothing
     end
 
     if Switch.switch_intertemporal == 1
@@ -217,16 +214,10 @@ function genesysmod_dec(model,Sets, Params,Switch, Maps)
     end
 
     BaseYearSlack= @variable(model, BaseYearSlack[𝓕], container=JuMP.Containers.DenseAxisArray) 
-    BaseYearBounds_TooLow = def_daa(𝓡,𝓣,𝓕,𝓨)
-    BaseYearBounds_TooHigh = def_daa(𝓨,𝓡,𝓣,𝓕)
+    BaseYearOvershoot = def_daa(𝓡,𝓣,𝓕,𝓨)
     for y ∈ 𝓨 for r ∈ 𝓡 for t ∈ 𝓣
-        for f ∈ Maps.Tech_Fuel[t]
-            BaseYearBounds_TooLow[r,t,f,y] = @variable(model, lower_bound = 0, base_name= "BaseYearBounds_TooLow[$r,$t,$f,$y]")
-            BaseYearBounds_TooHigh[y,r,t,f] = @variable(model, lower_bound = 0, base_name= "BaseYearBounds_TooHigh[$y,$r,$t,$f]")
-            if Switch.switch_base_year_bounds_debugging == 0
-                JuMP.fix(BaseYearBounds_TooLow[r,t,f,y], 0;force=true)
-                JuMP.fix(BaseYearBounds_TooHigh[y,r,t,f], 0;force=true)
-            end
+        for f ∈ Sets.Fuel
+            BaseYearOvershoot[r,t,f,y] = @variable(model, lower_bound = 0, base_name= "BaseYearOvershoot[$r,$t,$f,$y]")
         end
     end end end
     DiscountedSalvageValueTransmission= @variable(model, DiscountedSalvageValueTransmission[𝓨,𝓡] >= 0, container=JuMP.Containers.DenseAxisArray) 
@@ -238,7 +229,7 @@ function genesysmod_dec(model,Sets, Params,Switch, Maps)
     SalvageValue,DiscountedSalvageValue,OperatingCost,DiscountedOperatingCost,AnnualVariableOperatingCost,
     AnnualFixedOperatingCost,VariableOperatingCost,TotalDiscountedCost,TotalDiscountedCostByTechnology,
     ModelPeriodCostByRegion,AnnualCurtailmentCost,DiscountedAnnualCurtailmentCost,
-    StorageLevelYearStart,StorageLevelYearFinish,StorageLevelTSStart,AccumulatedNewStorageCapacity,NewStorageCapacity,
+    StorageLevelYearStart,StorageLevelTSStart,AccumulatedNewStorageCapacity,NewStorageCapacity,
     CapitalInvestmentStorage,DiscountedCapitalInvestmentStorage,SalvageValueStorage,
     DiscountedSalvageValueStorage,TotalDiscountedStorageCost,TotalActivityInReserveMargin,
     DemandNeedingReserveMargin,TotalREProductionAnnual,RETotalDemandOfTargetFuelAnnual,
@@ -249,8 +240,7 @@ function genesysmod_dec(model,Sets, Params,Switch, Maps)
     DiscountedNewTradeCapacityCosts,NetTrade,NetTradeAnnual,TotalTradeCosts,AnnualTotalTradeCosts,
     DiscountedAnnualTotalTradeCosts,DemandSplitByModalType,ProductionSplitByModalType,
     ProductionUpChangeInTimeslice,ProductionDownChangeInTimeslice,
-    RateOfTotalActivity,BaseYearSlack,BaseYearBounds_TooLow,BaseYearBounds_TooHigh, DiscountedSalvageValueTransmission,PeakingDemand,PeakingCapacity,
-    AnnualProductionChangeCost,DiscountedAnnualProductionChangeCost)
+    RateOfTotalActivity,BaseYearSlack,BaseYearOvershoot, DiscountedSalvageValueTransmission,PeakingDemand,PeakingCapacity)
     return Vars
 end
 

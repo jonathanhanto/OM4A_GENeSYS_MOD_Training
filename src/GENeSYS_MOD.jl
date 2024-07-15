@@ -30,22 +30,23 @@ using Dates
 using JuMP
 using XLSX
 using CSV
-using Statistics
 
 include("datastructures.jl")
 include("utils.jl")
+#include("genesysmod_subsets.jl")
 include("genesysmod.jl")
 include("genesysmod_dec.jl")
 include("genesysmod_timeseries_reduction.jl")
 include("genesysmod_dataload.jl")
 include("genesysmod_settings.jl")
 include("genesysmod_bounds.jl")
+include("genesysmod_scenariodata_sa.jl")
 include("genesysmod_equ.jl")
 include("genesysmod_employment.jl")
 include("genesysmod_variable_parameter.jl")
 include("genesysmod_results_raw.jl")
 include("genesysmod_results.jl")
-include("genesysmod_results_old.jl")
+#include("genesysmod_results_visualization.jl")
 include("genesysmod_levelizedcosts.jl")
 include("genesysmod_emissionintensity.jl")
 include("genesysmod_simple_dispatch.jl")
