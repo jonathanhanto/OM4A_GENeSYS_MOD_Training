@@ -419,10 +419,10 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
 
     YearSplit = JuMP.Containers.DenseAxisArray(ones(length(Timeslice), length(Sets.Year)) * 1/length(Timeslice), Timeslice, Sets.Year)
 
-    sdp_list=["Power","Mobility_Passenger","Mobility_Freight","Heat_Low_Residential","Heat_Low_Industrial","Heat_Medium_Industrial","Heat_High_Industrial"]
-    capf_list=["HLR_Heatpump_Aerial","HLR_Heatpump_Ground","RES_PV_Utility_Opt","RES_Wind_Onshore_Opt","RES_Wind_Offshore_Transitional","RES_Wind_Onshore_Avg","RES_Wind_Offshore_Shallow","RES_PV_Utility_Inf",
-    "RES_Wind_Onshore_Inf","RES_Wind_Offshore_Deep","RES_PV_Utility_HSAT","RES_PV_Utility_THSAT","RES_PV_Utility_VSAT","RES_PV_Utility_DAT","RES_BPV_Utility_90", "RES_BPV_Utility_Opt", "RES_BPV_Utility_HSAT", 
-    "RES_BPV_Utility_THSAT", "RES_BPV_Utility_VSAT", "RES_BPV_Utility_DAT","RES_Hydro_Small"]
+    sdp_list=["Power","Mobility_Passenger","Mobility_Freight","Heat_Buildings","Heat_Low_Industrial","Heat_Medium_Industrial","Heat_High_Industrial"]
+    capf_list=["HB_Heatpump_Aerial","HB_Heatpump_Ground","P_PV_Utility_Opt","P_Wind_Onshore_Opt","P_Wind_Offshore_Transitional","P_Wind_Onshore_Avg","P_Wind_Offshore_Shallow","P_PV_Utility_Inf",
+    "P_Wind_Onshore_Inf","P_Wind_Offshore_Deep","RES_PV_Utility_HSAT","RES_PV_Utility_THSAT","RES_PV_Utility_VSAT","RES_PV_Utility_DAT","RES_BPV_Utility_90", "RES_BPV_Utility_Opt", "RES_BPV_Utility_HSAT", 
+    "RES_BPV_Utility_THSAT", "RES_BPV_Utility_VSAT", "RES_BPV_Utility_DAT","P_Hydro_RoR"]
 
     SpecifiedDemandProfile = JuMP.Containers.DenseAxisArray(zeros(length(Sets.Region_full), length(Sets.Fuel), length(Timeslice), length(Sets.Year)), Sets.Region_full, Sets.Fuel, Timeslice, Sets.Year)
     CapacityFactor = JuMP.Containers.DenseAxisArray(ones(length(Sets.Region_full), length(Sets.Technology), length(Timeslice), length(Sets.Year)), Sets.Region_full, Sets.Technology, Timeslice, Sets.Year)
@@ -444,8 +444,8 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
     for r ∈ Sets.Region_full 
         SpecifiedDemandProfile[r,"Mobility_Passenger",:,Sets.Year[1]] = tmp["MOBILITY_PSNG"][Timeslice,r]
         SpecifiedDemandProfile[r,"Mobility_Freight",:,Sets.Year[1]] = tmp["MOBILITY_PSNG"][Timeslice,r]
-        SpecifiedDemandProfile[r,"Heat_Low_Residential",:,Sets.Year[1]] = tmp["HEAT_LOW"][Timeslice,r]
-        SpecifiedDemandProfile[r,"Heat_Low_Industrial",:,Sets.Year[1]] = tmp["HEAT_HIGH"][Timeslice,r]
+        SpecifiedDemandProfile[r,"Heat_Buildings",:,Sets.Year[1]] = tmp["HEAT_LOW"][Timeslice,r]
+        SpecifiedDemandProfile[r,"Heat_Buildings",:,Sets.Year[1]] = tmp["HEAT_HIGH"][Timeslice,r]
         SpecifiedDemandProfile[r,"Heat_Medium_Industrial",:,Sets.Year[1]] = tmp["HEAT_HIGH"][Timeslice,r]
         SpecifiedDemandProfile[r,"Heat_High_Industrial",:,Sets.Year[1]] = tmp["HEAT_HIGH"][Timeslice,r]
     end
@@ -465,22 +465,22 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
         end
         for r ∈ Sets.Region_full 
             if length(Timeslice) < 8760
-                CapacityFactor[r,"HLR_Heatpump_Aerial",:,y] .= 1
-                CapacityFactor[r,"HLR_Heatpump_Ground",:,y] .= 1
-                TimeDepEfficiency[r,"HLR_Heatpump_Aerial",:,y] = ScaledCountryData["HEAT_PUMP_AIR"][Timeslice,r]
-                TimeDepEfficiency[r,"HLR_Heatpump_Ground",:,y] = ScaledCountryData["HEAT_PUMP_GROUND"][Timeslice,r]
+                CapacityFactor[r,"HB_Heatpump_Aerial",:,y] .= 1
+                CapacityFactor[r,"HB_Heatpump_Ground",:,y] .= 1
+                TimeDepEfficiency[r,"HB_Heatpump_Aerial",:,y] = ScaledCountryData["HEAT_PUMP_AIR"][Timeslice,r]
+                TimeDepEfficiency[r,"HB_Heatpump_Ground",:,y] = ScaledCountryData["HEAT_PUMP_GROUND"][Timeslice,r]
 
-                CapacityFactor[r,"RES_PV_Utility_Opt",:,y] = ScaledCountryData["PV_OPT"][Timeslice,r]
-                CapacityFactor[r,"RES_Wind_Onshore_Opt",:,y] = ScaledCountryData["WIND_ONSHORE_OPT"][Timeslice,r]
-                CapacityFactor[r,"RES_Wind_Offshore_Transitional",:,y] = ScaledCountryData["WIND_OFFSHORE"][Timeslice,r]
+                CapacityFactor[r,"P_PV_Utility_Opt",:,y] = ScaledCountryData["PV_OPT"][Timeslice,r]
+                CapacityFactor[r,"P_Wind_Onshore_Opt",:,y] = ScaledCountryData["WIND_ONSHORE_OPT"][Timeslice,r]
+                CapacityFactor[r,"P_Wind_Offshore_Transitional",:,y] = ScaledCountryData["WIND_OFFSHORE"][Timeslice,r]
 
-                CapacityFactor[r,"RES_PV_Utility_Avg",:,y] = ScaledCountryData["PV_AVG"][Timeslice,r]
-                CapacityFactor[r,"RES_Wind_Onshore_Avg",:,y] = ScaledCountryData["WIND_ONSHORE_AVG"][Timeslice,r]
-                CapacityFactor[r,"RES_Wind_Offshore_Shallow",:,y] = ScaledCountryData["WIND_OFFSHORE_SHALLOW"][Timeslice,r]
+                CapacityFactor[r,"P_PV_Utility_Avg",:,y] = ScaledCountryData["PV_AVG"][Timeslice,r]
+                CapacityFactor[r,"P_Wind_Onshore_Avg",:,y] = ScaledCountryData["WIND_ONSHORE_AVG"][Timeslice,r]
+                CapacityFactor[r,"P_Wind_Offshore_Shallow",:,y] = ScaledCountryData["WIND_OFFSHORE_SHALLOW"][Timeslice,r]
 
-                CapacityFactor[r,"RES_PV_Utility_Inf",:,y] = ScaledCountryData["PV_INF"][Timeslice,r]
-                CapacityFactor[r,"RES_Wind_Onshore_Inf",:,y] = ScaledCountryData["WIND_ONSHORE_INF"][Timeslice,r]
-                CapacityFactor[r,"RES_Wind_Offshore_Deep",:,y] = ScaledCountryData["WIND_OFFSHORE_DEEP"][Timeslice,r]
+                CapacityFactor[r,"P_PV_Utility_Inf",:,y] = ScaledCountryData["PV_INF"][Timeslice,r]
+                CapacityFactor[r,"P_Wind_Onshore_Inf",:,y] = ScaledCountryData["WIND_ONSHORE_INF"][Timeslice,r]
+                CapacityFactor[r,"P_Wind_Offshore_Deep",:,y] = ScaledCountryData["WIND_OFFSHORE_DEEP"][Timeslice,r]
 
                 CapacityFactor[r,"RES_PV_Utility_HSAT",:,y] = ScaledCountryData["PV_HSAT"][Timeslice,r]
                 CapacityFactor[r,"RES_PV_Utility_THSAT",:,y] = ScaledCountryData["PV_THSAT"][Timeslice,r]
@@ -494,22 +494,22 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
                 CapacityFactor[r,"RES_BPV_Utility_VSAT",:,y] = ScaledCountryData["BPV_VSAT"][Timeslice,r]
                 CapacityFactor[r,"RES_BPV_Utility_DAT",:,y] = ScaledCountryData["BPV_DAT"][Timeslice,r]
 
-                CapacityFactor[r,"RES_Hydro_Small",:,y] = ScaledCountryData["HYDRO_ROR"][Timeslice,r]
+                CapacityFactor[r,"P_Hydro_RoR",:,y] = ScaledCountryData["HYDRO_ROR"][Timeslice,r]
             else
-                CapacityFactor[r,"HLR_Heatpump_Aerial",:,y] = CountryData["HEAT_PUMP_AIR"][:,r]
-                CapacityFactor[r,"HLR_Heatpump_Ground",:,y] = CountryData["HEAT_PUMP_GROUND"][:,r]
+                CapacityFactor[r,"HB_Heatpump_Aerial",:,y] = CountryData["HEAT_PUMP_AIR"][:,r]
+                CapacityFactor[r,"HB_Heatpump_Ground",:,y] = CountryData["HEAT_PUMP_GROUND"][:,r]
 
-                CapacityFactor[r,"RES_PV_Utility_Opt",:,y] = CountryData["PV_OPT"][:,r]
-                CapacityFactor[r,"RES_Wind_Onshore_Opt",:,y] = CountryData["WIND_ONSHORE_OPT"][:,r]
-                CapacityFactor[r,"RES_Wind_Offshore_Transitional",:,y] = CountryData["WIND_OFFSHORE"][:,r]
+                CapacityFactor[r,"P_PV_Utility_Opt",:,y] = CountryData["PV_OPT"][:,r]
+                CapacityFactor[r,"P_Wind_Onshore_Opt",:,y] = CountryData["WIND_ONSHORE_OPT"][:,r]
+                CapacityFactor[r,"P_Wind_Offshore_Transitional",:,y] = CountryData["WIND_OFFSHORE"][:,r]
 
-                CapacityFactor[r,"RES_PV_Utility_Avg",:,y] = CountryData["PV_AVG"][:,r]
-                CapacityFactor[r,"RES_Wind_Onshore_Avg",:,y] = CountryData["WIND_ONSHORE_AVG"][:,r]
-                CapacityFactor[r,"RES_Wind_Offshore_Shallow",:,y] = CountryData["WIND_OFFSHORE_SHALLOW"][:,r]
+                CapacityFactor[r,"P_PV_Utility_Avg",:,y] = CountryData["PV_AVG"][:,r]
+                CapacityFactor[r,"P_Wind_Onshore_Avg",:,y] = CountryData["WIND_ONSHORE_AVG"][:,r]
+                CapacityFactor[r,"P_Wind_Offshore_Shallow",:,y] = CountryData["WIND_OFFSHORE_SHALLOW"][:,r]
 
-                CapacityFactor[r,"RES_PV_Utility_Inf",:,y] = CountryData["PV_INF"][:,r]
-                CapacityFactor[r,"RES_Wind_Onshore_Inf",:,y] = CountryData["WIND_ONSHORE_INF"][:,r]
-                CapacityFactor[r,"RES_Wind_Offshore_Deep",:,y] = CountryData["WIND_OFFSHORE_DEEP"][:,r]
+                CapacityFactor[r,"P_PV_Utility_Inf",:,y] = CountryData["PV_INF"][:,r]
+                CapacityFactor[r,"P_Wind_Onshore_Inf",:,y] = CountryData["WIND_ONSHORE_INF"][:,r]
+                CapacityFactor[r,"P_Wind_Offshore_Deep",:,y] = CountryData["WIND_OFFSHORE_DEEP"][:,r]
 
                 CapacityFactor[r,"RES_PV_Utility_HSAT",:,y] = CountryData["PV_HSAT"][:,r]
                 CapacityFactor[r,"RES_PV_Utility_THSAT",:,y] = CountryData["PV_THSAT"][:,r]
@@ -523,7 +523,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
                 CapacityFactor[r,"RES_BPV_Utility_VSAT",:,y] = CountryData["BPV_VSAT"][:,r]
                 CapacityFactor[r,"RES_BPV_Utility_DAT",:,y] = CountryData["BPV_DAT"][:,r]
 
-                CapacityFactor[r,"RES_Hydro_Small",:,y] = CountryData["HYDRO_ROR"][:,r]
+                CapacityFactor[r,"P_Hydro_RoR",:,y] = CountryData["HYDRO_ROR"][:,r]
             end
         end
     end

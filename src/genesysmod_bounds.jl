@@ -159,9 +159,9 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
     #Params.CapacityFactor[[x ∈ Subsets.Heat for x ∈ Params.CapacityFactor[!,:Technology]], :Value] .= 1
 
     for r ∈ Sets.Region_full for l ∈ Sets.Timeslice for y ∈ Sets.Year
-        Params.CapacityFactor[r,"HLI_Solar_Thermal",l,y] = Params.CapacityFactor[r,"RES_PV_Rooftop_Commercial",l,y]
-        Params.CapacityFactor[r,"HLR_Solar_Thermal",l,y] = Params.CapacityFactor[r,"RES_PV_Rooftop_Commercial",l,y]
-        Params.CapacityFactor[r,"RES_PV_Rooftop_Residential",l,y] = Params.CapacityFactor[r,"RES_PV_Rooftop_Commercial",l,y]
+        Params.CapacityFactor[r,"HLI_Solar_Thermal",l,y] = Params.CapacityFactor[r,"P_PV_Rooftop_Commercial",l,y]
+        Params.CapacityFactor[r,"HB_Solar_Thermal",l,y] = Params.CapacityFactor[r,"P_PV_Rooftop_Commercial",l,y]
+        Params.CapacityFactor[r,"P_PV_Rooftop_Residential",l,y] = Params.CapacityFactor[r,"P_PV_Rooftop_Commercial",l,y]
     end end end
     #
     # ####### No new capacity construction in 2015 #############
@@ -171,7 +171,7 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
             for t ∈ intersect(Sets.Technology, vcat(Params.TagTechnologyToSubsets["Transformation"],Params.TagTechnologyToSubsets["PowerSupply"],Params.TagTechnologyToSubsets["Transport"], Params.TagTechnologyToSubsets["SectorCoupling"], Params.TagTechnologyToSubsets["StorageDummies"]))
                 JuMP.fix(Vars.NewCapacity[Switch.StartYear,t,r],0; force=true)
             end
-            for t ∈ intersect(Sets.Technology, vcat(Params.TagTechnologyToSubsets["Biomass"],Params.TagTechnologyToSubsets["CHP"],["HLR_Gas_Boiler","HLI_Gas_Boiler","HHI_BF_BOF",
+            for t ∈ intersect(Sets.Technology, vcat(Params.TagTechnologyToSubsets["Biomass"],Params.TagTechnologyToSubsets["CHP"],["HB_Gas_Boiler","HLI_Gas_Boiler","HHI_BF_BOF",
                 "HHI_Bio_BF_BOF","HHI_Scrap_EAF","HHI_DRI_EAF", "D_Gas_Methane"]))
                 if JuMP.is_fixed(Vars.NewCapacity[Switch.StartYear,t,r])
                     JuMP.unfix(Vars.NewCapacity[Switch.StartYear,t,r])
@@ -211,7 +211,7 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
     #
     # ####### Dispatch and Curtailment #############
     #
-    subs = vcat(Params.TagTechnologyToSubsets["Solar"], Params.TagTechnologyToSubsets["Wind"], ["RES_Hydro_Small"])
+    subs = vcat(Params.TagTechnologyToSubsets["Solar"], Params.TagTechnologyToSubsets["Wind"], ["P_Hydro_RoR"])
     Params.TagDispatchableTechnology[subs] = zeros(length(intersect(Sets.Technology,subs)))
     Params.CurtailmentCostFactor == 0.1
 
@@ -311,8 +311,8 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
                 Params.ProductionChangeCost[r,t,y] = 0
             end =#
             for l ∈ Sets.Timeslice
-                Params.MinActiveProductionPerTimeslice[y,l,"Power","RES_Hydro_Large",r] = 0.1
-                Params.MinActiveProductionPerTimeslice[y,l,"Power","RES_Hydro_Small",r] = 0.05
+                Params.MinActiveProductionPerTimeslice[y,l,"Power","P_Hydro_Reservoir",r] = 0.1
+                Params.MinActiveProductionPerTimeslice[y,l,"Power","P_Hydro_RoR",r] = 0.05
             end
         end end
     end
@@ -335,11 +335,11 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
                 JuMP.fix(Vars.StorageLevelTSStart[s,y,Sets.Timeslice[i],r], 0; force = true)
             end =#
         end
-        Params.CapacityFactor[r,"RES_PV_Rooftop_Commercial",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"RES_PV_Utility_Avg",Sets.Timeslice[i],y]
-        Params.CapacityFactor[r,"RES_PV_Rooftop_Residential",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"RES_PV_Utility_Avg",Sets.Timeslice[i],y]
-        Params.CapacityFactor[r,"RES_CSP",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"RES_PV_Utility_Opt",Sets.Timeslice[i],y]
-        Params.CapacityFactor[r,"HLR_Solar_Thermal",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"RES_PV_Utility_Avg",Sets.Timeslice[i],y]
-        Params.CapacityFactor[r,"HLI_Solar_Thermal",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"RES_PV_Utility_Avg",Sets.Timeslice[i],y]
+        Params.CapacityFactor[r,"P_PV_Rooftop_Commercial",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"P_PV_Utility_Avg",Sets.Timeslice[i],y]
+        Params.CapacityFactor[r,"P_PV_Rooftop_Residential",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"P_PV_Utility_Avg",Sets.Timeslice[i],y]
+        Params.CapacityFactor[r,"P_CSP",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"P_PV_Utility_Opt",Sets.Timeslice[i],y]
+        Params.CapacityFactor[r,"HB_Solar_Thermal",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"P_PV_Utility_Avg",Sets.Timeslice[i],y]
+        Params.CapacityFactor[r,"HLI_Solar_Thermal",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"P_PV_Utility_Avg",Sets.Timeslice[i],y]
     end end end
 
     #for r ∈ Sets.Region_full for s in Sets.Storage for y ∈ Sets.Year

@@ -238,14 +238,14 @@ function genesysmod_dec(model,Sets, Params,Switch,Maps)
 
     BaseYearSlack= @variable(model, BaseYearSlack[𝓕], container=JuMP.Containers.DenseAxisArray) 
     BaseYearBounds_TooLow = def_daa(𝓡,𝓣,𝓕,𝓨)
-    BaseYearBounds_TooHigh = def_daa(𝓨,𝓡,𝓣,𝓕)
+    BaseYearBounds_TooHigh = def_daa(𝓡,𝓣,𝓕,𝓨)
     for y ∈ 𝓨 for r ∈ 𝓡 for t ∈ 𝓣
         for f ∈ Maps.Tech_Fuel[t]
             BaseYearBounds_TooLow[r,t,f,y] = @variable(model, lower_bound = 0, base_name= "BaseYearBounds_TooLow[$r,$t,$f,$y]")
-            BaseYearBounds_TooHigh[y,r,t,f] = @variable(model, lower_bound = 0, base_name= "BaseYearBounds_TooHigh[$y,$r,$t,$f]")
+            BaseYearBounds_TooHigh[r,t,f,y] = @variable(model, lower_bound = 0, base_name= "BaseYearBounds_TooHigh[$r,$t,$f,$y]")
             if Switch.switch_base_year_bounds_debugging == 0
                 JuMP.fix(BaseYearBounds_TooLow[r,t,f,y], 0;force=true)
-                JuMP.fix(BaseYearBounds_TooHigh[y,r,t,f], 0;force=true)
+                JuMP.fix(BaseYearBounds_TooHigh[r,t,f,y], 0;force=true)
             end
         end
     end end end

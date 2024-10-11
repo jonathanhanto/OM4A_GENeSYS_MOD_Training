@@ -163,17 +163,17 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
 
   ###### RES_Wind_Offshore_Transitional Cap for 2025
   @constraint(model, 
-  sum(Vars.TotalCapacityAnnual[2025,"RES_Wind_Offshore_Transitional", r] for r in Sets.Region_full) <= 0.1, 
+  sum(Vars.TotalCapacityAnnual[2025,"P_Wind_Offshore_Transitional", r] for r in Sets.Region_full) <= 0.1, 
   base_name="JH_Wind_offshore_Transitional_Restriction_Total_2025")
   #####  
   ###### RES_Wind_Offshore_Shallow Cap for 2025
   @constraint(model, 
-  sum(Vars.TotalCapacityAnnual[2025,"RES_Wind_Offshore_Shallow", r] for r in Sets.Region_full) <= 0.1, 
+  sum(Vars.TotalCapacityAnnual[2025,"P_Wind_Offshore_Shallow", r] for r in Sets.Region_full) <= 0.1, 
   base_name="JH_Wind_offshore_Shallow_Restriction_Total_2025")
   #####  
   ###### RES_Wind_Offshore_Deep Cap for 2025
   @constraint(model, 
-  sum(Vars.TotalCapacityAnnual[2025,"RES_Wind_Offshore_Deep", r] for r in Sets.Region_full) <= 0.1, 
+  sum(Vars.TotalCapacityAnnual[2025,"P_Wind_Offshore_Deep", r] for r in Sets.Region_full) <= 0.1, 
   base_name="JH_Wind_offshore_Deep_Restriction_Total_2025")
   #####  
 

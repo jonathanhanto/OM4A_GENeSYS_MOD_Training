@@ -44,7 +44,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
   + sum(Vars.DiscountedAnnualTotalTradeCosts[y,r] for y ∈ 𝓨 for r ∈ 𝓡)
   + sum(Vars.DiscountedNewTradeCapacityCosts[y,f,r,rr] for y ∈ 𝓨 for f ∈ 𝓕 for r ∈ 𝓡 for rr ∈ 𝓡)
   + sum(Vars.DiscountedAnnualCurtailmentCost[y,f,r] for y ∈ 𝓨 for f ∈ 𝓕 for r ∈ 𝓡)
-  + sum(Vars.BaseYearBounds_TooHigh[y,r,t,f]*9999 for y ∈ 𝓨 for r ∈ 𝓡 for t ∈ 𝓣 for f ∈ 𝓕)
+  + sum(Vars.BaseYearBounds_TooHigh[r,t,f,y]*9999 for y ∈ 𝓨 for r ∈ 𝓡 for t ∈ 𝓣 for f ∈ 𝓕)
   + sum(Vars.BaseYearBounds_TooLow[r,t,f,y]*9999 for y ∈ 𝓨 for r ∈ 𝓡 for t ∈ 𝓣 for f ∈ 𝓕)
   - sum(Vars.DiscountedSalvageValueTransmission[y,r] for y ∈ 𝓨 for r ∈ 𝓡))
   print("Cstr: Cost : ",Dates.now()-start,"\n")
@@ -199,7 +199,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
     TagTimeIndependentFuel[:,"Hardcoal",:] .= 1
     TagTimeIndependentFuel[:,"Nuclear",:] .= 1
     TagTimeIndependentFuel[:,"Oil",:] .= 1
-    TagTimeIndependentFuel[:,"Air",:] .= 1
+    #TagTimeIndependentFuel[:,"Air",:] .= 1
     TagTimeIndependentFuel[:,"DAC_Dummy",:] .= 1
     TagTimeIndependentFuel[:,"ETS",:] .= 1
     TagTimeIndependentFuel[:,"ETS_Source",:] .= 1
@@ -211,7 +211,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
     TagTimeIndependentFuel[:,"Hardcoal",:] .= 1
     TagTimeIndependentFuel[:,"Nuclear",:] .= 1
     TagTimeIndependentFuel[:,"Oil",:] .= 1
-    TagTimeIndependentFuel[:,"Air",:] .= 1
+    #TagTimeIndependentFuel[:,"Air",:] .= 1
     TagTimeIndependentFuel[:,"DAC_Dummy",:] .= 1
     TagTimeIndependentFuel[:,"ETS",:] .= 1
     TagTimeIndependentFuel[:,"ETS_Source",:] .= 1
@@ -1126,12 +1126,12 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
     for y ∈ 𝓨 for t ∈ 𝓣 for r ∈ 𝓡
       for f ∈ Maps.Tech_Fuel[t]
         if Switch.switch_base_year_bounds_debugging == 0
-          JuMP.fix(Vars.BaseYearBounds_TooHigh[y,r,t,f], 0; force=true)
-          JuMP.fix(Vars.BaseYearBounds_TooLow[y,r,t,f], 0; force=true)
+          JuMP.fix(Vars.BaseYearBounds_TooHigh[r,t,f,y], 0; force=true)
+          JuMP.fix(Vars.BaseYearBounds_TooLow[r,t,f,y], 0; force=true)
         end
         if Params.RegionalBaseYearProduction[r,t,f,y] != 0
           @constraint(model,
-          Vars.ProductionByTechnologyAnnual[y,t,f,r] >= Params.RegionalBaseYearProduction[r,t,f,y]*(1-Settings.BaseYearSlack[f]) - Vars.BaseYearBounds_TooHigh[y,r,t,f],
+          Vars.ProductionByTechnologyAnnual[y,t,f,r] >= Params.RegionalBaseYearProduction[r,t,f,y]*(1-Settings.BaseYearSlack[f]) - Vars.BaseYearBounds_TooHigh[r,t,f,y],
           base_name="BYB1_RegionalBaseYearProductionLowerBound|$(y)|$(r)|$(t)|$(f)")
         end
       
