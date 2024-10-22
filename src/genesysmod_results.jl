@@ -508,8 +508,8 @@ function genesysmod_results(model,Sets, Params, VarPar, Vars, Switch, Settings, 
     output_trade_capacity_new = DataFrame([name => [] for name in colnames])
     dict_col_value = Dict()
     
-    df_total_capacity = convert_jump_container_to_df(value.(model[:TotalTradeCapacity][:,:,:,:]);dim_names=[:Year, :Fuel, :Region, :Region2])
-    df_total_capacity[!,:Type] .= "TotalCapacity"
+    df_total_capacity = convert_jump_container_to_df(value.(Vars.TotalTradeCapacity[:,:,:,:]);dim_names=[:Year, :Fuel, :Region, :Region2])
+    df_total_capacity[!,:Type] .= "TotalTradeCapacity"
     df_total_capacity[!,:PathwayScenario] .= "$(Switch.emissionPathway)_$(Switch.emissionScenario)"
     merge_df(df_total_capacity, dict_col_value, output_trade_capacity_new, colnames)
 
@@ -518,7 +518,7 @@ function genesysmod_results(model,Sets, Params, VarPar, Vars, Switch, Settings, 
     df_residual_capacity[!,:PathwayScenario] .= "$(Switch.emissionPathway)_$(Switch.emissionScenario)"
     merge_df(df_residual_capacity, dict_col_value, output_trade_capacity_new, colnames)
 
-    df_new_capacity = convert_jump_container_to_df((value.(model[:NewTradeCapacity]));dim_names=[:Year, :Fuel, :Region, :Region2])
+    df_new_capacity = convert_jump_container_to_df(value.(Vars.NewTradeCapacity[:,:,:,:]);dim_names=[:Year, :Fuel, :Region, :Region2])
     df_new_capacity[!,:Type] .= "NewCapacity"
     df_new_capacity[!,:PathwayScenario] .= "$(Switch.emissionPathway)_$(Switch.emissionScenario)"
     merge_df(df_new_capacity, dict_col_value, output_trade_capacity_new, colnames)
@@ -641,12 +641,20 @@ function genesysmod_results(model,Sets, Params, VarPar, Vars, Switch, Settings, 
     output_energydemandstatistics = DataFrame([name => [] for name in colnames])
 
     ## Final Energy for all regions per sector
-    fed= JuMP.Containers.DenseAxisArray(zeros(length(Sets.Year),length(Sets.Fuel),length(Sets.Region_full),length(Sets.Sector)), Sets.Year, Sets.Fuel, Sets.Region_full, Sets.Sector)
-    for se ∈ FinalDemandSector for y ∈ Sets.Year for f ∈ Sets.Fuel for r ∈ Sets.Region_full
-        if f ∉ ["Area_Rooftop_Residential","Area_Rooftop_Commercial","Heat_District"]
-            fed[y,f,r,se] = sum(value(Vars.UseByTechnologyAnnual[y,t,f,r]) for t ∈ Sets.Technology if Params.TagTechnologyToSector[t,se] != 0)/3.6
+    fed = JuMP.Containers.DenseAxisArray(zeros(length(Sets.Year), length(Sets.Fuel), length(Sets.Region_full), length(Sets.Sector)), Sets.Year, Sets.Fuel, Sets.Region_full, Sets.Sector)
+
+    for se ∈ FinalDemandSector
+        for y ∈ Sets.Year
+            for f ∈ Sets.Fuel
+                for r ∈ Sets.Region_full
+                    if f ∉ ["Area_Rooftop_Residential", "Area_Rooftop_Commercial", "Heat_District"]
+                        # Provide an init value (0.0) to sum, in case the collection is empty
+                        fed[y, f, r, se] = sum(value(Vars.UseByTechnologyAnnual[y, t, f, r]) for t ∈ Sets.Technology if Params.TagTechnologyToSector[t, se] != 0; init=0.0) / 3.6
+                    end
+                end
+            end
         end
-    end end end end
+    end
 
     df_tmp = convert_jump_container_to_df(fed;dim_names=[:Year, :Fuel, :Region, :Sector])
     df_tmp[!,:Type] .= "Final Energy Demand [TWh]"
