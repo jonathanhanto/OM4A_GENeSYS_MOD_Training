@@ -320,7 +320,7 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
     #marginal costs for better numerical stability
     for r ∈ Sets.Region_full for t ∈ Sets.Technology for y ∈ Sets.Year
         if Params.CapitalCost[r,t,y] == 0
-            Params.CapitalCost[r,t,y] = 0.01
+            Params.CapitalCost[r,t,y] = 0.001
         end
     end end end
 

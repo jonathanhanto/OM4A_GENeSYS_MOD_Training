@@ -331,4 +331,12 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
     end end
   end
 
+  #=JuMP.fix(Vars.ProductionByTechnologyAnnual[2050,"Export_H2","H2","SA-EC"],10; force=true)
+
+  @constraint(model, 
+  sum(Vars.ProductionByTechnologyAnnual[y,"Export_H2","H2",r] for y in Sets.Year, r in Sets.Region_full) >= 100, 
+  base_name="KL_ExportTest")
+  =#
+
 end
+
