@@ -44,7 +44,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
   + sum(Vars.DiscountedAnnualTotalTradeCosts[y,r] for y ∈ 𝓨 for r ∈ 𝓡)
   + sum(Vars.DiscountedNewTradeCapacityCosts[y,f,r,rr] for y ∈ 𝓨 for f ∈ 𝓕 for r ∈ 𝓡 for rr ∈ 𝓡)
   + sum(Vars.DiscountedAnnualCurtailmentCost[y,f,r] for y ∈ 𝓨 for f ∈ 𝓕 for r ∈ 𝓡)
-  + sum(Vars.BaseYearBounds_TooHigh[y,r,t,f]*9999 for y ∈ 𝓨 for r ∈ 𝓡 for t ∈ 𝓣 for f ∈ 𝓕)
+  + sum(Vars.BaseYearBounds_TooHigh[r,t,f,y]*9999 for y ∈ 𝓨 for r ∈ 𝓡 for t ∈ 𝓣 for f ∈ 𝓕)
   + sum(Vars.BaseYearBounds_TooLow[r,t,f,y]*9999 for y ∈ 𝓨 for r ∈ 𝓡 for t ∈ 𝓣 for f ∈ 𝓕)
   - sum(Vars.DiscountedSalvageValueTransmission[y,r] for y ∈ 𝓨 for r ∈ 𝓡))
   print("Cstr: Cost : ",Dates.now()-start,"\n")
@@ -199,7 +199,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
     TagTimeIndependentFuel[:,"Hardcoal",:] .= 1
     TagTimeIndependentFuel[:,"Nuclear",:] .= 1
     TagTimeIndependentFuel[:,"Oil",:] .= 1
-    TagTimeIndependentFuel[:,"Air",:] .= 1
+    #TagTimeIndependentFuel[:,"Air",:] .= 1
     TagTimeIndependentFuel[:,"DAC_Dummy",:] .= 1
     TagTimeIndependentFuel[:,"ETS",:] .= 1
     TagTimeIndependentFuel[:,"ETS_Source",:] .= 1
@@ -211,7 +211,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
     TagTimeIndependentFuel[:,"Hardcoal",:] .= 1
     TagTimeIndependentFuel[:,"Nuclear",:] .= 1
     TagTimeIndependentFuel[:,"Oil",:] .= 1
-    TagTimeIndependentFuel[:,"Air",:] .= 1
+    #TagTimeIndependentFuel[:,"Air",:] .= 1
     TagTimeIndependentFuel[:,"DAC_Dummy",:] .= 1
     TagTimeIndependentFuel[:,"ETS",:] .= 1
     TagTimeIndependentFuel[:,"ETS_Source",:] .= 1
@@ -315,7 +315,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
   end
 
   for y ∈ 𝓨 for t ∈ 𝓣 for  r ∈ 𝓡 for l ∈ 𝓛
-    @constraint(model, model[:TotalCapacityAnnual][y,t,r] >= model[:CurtailedCapacity][r,l,t,y], base_name="CA3c_CurtailedCapacity|$(r)|$(l)|$(t)|$(y)")
+    @constraint(model, Vars.TotalCapacityAnnual[y,t,r] >= Vars.CurtailedCapacity[r,l,t,y], base_name="CA3c_CurtailedCapacity|$(r)|$(l)|$(t)|$(y)")
   end end end end
   print("Cstr: Cap Adequacy A3 : ",Dates.now()-start,"\n")
 
@@ -342,11 +342,11 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
         for l ∈ 𝓛
           @constraint(model, Vars.Import[y,l,f,r,rr] == Vars.Export[y,l,f,rr,r], base_name="EB1_TradeBalanceEachTS|$(y)|$(l)|$(f)|$(r)|$(rr)")
         end
-      else
+#=       else
         for l ∈ 𝓛
           JuMP.fix(Vars.Import[y,l,f,r,rr], 0; force=true)
           JuMP.fix(Vars.Export[y,l,f,rr,r], 0; force=true)
-        end
+        end =#
       end
     end
 
@@ -405,7 +405,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
   for i ∈ eachindex(𝓨) for r ∈ 𝓡 for rr ∈ 𝓡
     if Params.TradeRoute[r,rr,"Power",𝓨[i]] > 0
       for l ∈ 𝓛
-        @constraint(model, (model[:Import][𝓨[i],l,"Power",r,rr]) <= model[:TotalTradeCapacity][𝓨[i],"Power",rr,r]*Params.YearSplit[l,𝓨[i]]*31.536 , base_name="TrC1_TradeCapacityPowerLinesImport|$(𝓨[i])|$(l)_Power|$(r)|$(rr)")
+        @constraint(model, (Vars.Import[𝓨[i],l,"Power",r,rr]) <= Vars.TotalTradeCapacity[𝓨[i],"Power",rr,r]*Params.YearSplit[l,𝓨[i]]*31.536 , base_name="TrC1_TradeCapacityPowerLinesImport|$(𝓨[i])|$(l)_Power|$(r)|$(rr)")
       end
       for f ∈ 𝓕
         if Params.TradeCapacityGrowthCosts[r,rr,f] != 0
@@ -415,7 +415,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
       end
     end
     for f ∈ 𝓕
-      if Params.TradeRoute[r,rr,f,𝓨[i]] == 0 || Params.TradeCapacityGrowthCosts[r,rr,f] == 0
+      if Params.TradeRoute[r,rr,f,𝓨[i]] != 0 && Params.TradeCapacityGrowthCosts[r,rr,f] == 0
         JuMP.fix(Vars.DiscountedNewTradeCapacityCosts[𝓨[i],f,r,rr],0; force=true)
       end
     end
@@ -451,9 +451,9 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
     end
 
     for f ∈ 𝓕
-      if Params.TradeRoute[r,rr,f,𝓨[i]] == 0
+#=       if Params.TradeRoute[r,rr,f,𝓨[i]] == 0
         JuMP.fix(Vars.NewTradeCapacity[𝓨[i],f,r,rr],0; force=true)
-      end
+      end =#
       if Params.TradeCapacityGrowthCosts[r,rr,f] > 0 && f != "Power"
         @constraint(model, sum(Vars.Import[𝓨[i],l,f,rr,r] for l ∈ 𝓛) <= Vars.TotalTradeCapacity[𝓨[i],f,r,rr],
         base_name="TrC7_TradeCapacityLimitNonPower$(𝓨[i])|$(f)|$(r)|$(rr)")
@@ -465,7 +465,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
       base_name="TrC6_SymmetricalTransmissionExpansion|$(𝓨[i])|$(r)|$(rr)")
     end
 
-    if Params.TradeRoute[r,rr,"Power",𝓨[i]] == 0 || Params.GrowthRateTradeCapacity[r,rr,"Power",𝓨[i]] == 0
+    if Params.TradeRoute[r,rr,"Power",𝓨[i]] != 0 && Params.GrowthRateTradeCapacity[r,rr,"Power",𝓨[i]] == 0
       JuMP.fix(Vars.NewTradeCapacity[𝓨[i],"Power",r,rr],0; force=true)
     end
 
@@ -1125,19 +1125,22 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
    start=Dates.now()
     for y ∈ 𝓨 for t ∈ 𝓣 for r ∈ 𝓡
       for f ∈ Maps.Tech_Fuel[t]
+        if Switch.switch_base_year_bounds_debugging == 0
+          JuMP.fix(Vars.BaseYearBounds_TooHigh[r,t,f,y], 0; force=true)
+          JuMP.fix(Vars.BaseYearBounds_TooLow[r,t,f,y], 0; force=true)
+        end
         if Params.RegionalBaseYearProduction[r,t,f,y] != 0
           @constraint(model,
-          Vars.ProductionByTechnologyAnnual[y,t,f,r] >= Params.RegionalBaseYearProduction[r,t,f,y]*(1-Settings.BaseYearSlack[f]) - Vars.BaseYearBounds_TooHigh[y,r,t,f],
+          Vars.ProductionByTechnologyAnnual[y,t,f,r] >= Params.RegionalBaseYearProduction[r,t,f,y]*(1-Settings.BaseYearSlack[f]) - Vars.BaseYearBounds_TooHigh[r,t,f,y],
           base_name="BYB1_RegionalBaseYearProductionLowerBound|$(y)|$(r)|$(t)|$(f)")
         end
-      end
-      for f ∈ Maps.Tech_Fuel[t]
+      
         if Params.RegionalBaseYearProduction[r,t,f,y] != 0
-         @constraint(model,
-         Vars.ProductionByTechnologyAnnual[y,t,f,r] <= Params.RegionalBaseYearProduction[r,t,f,y] + Vars.BaseYearBounds_TooLow[r,t,f,y],
-         base_name="BYB2_RegionalBaseYearProductionUpperBound|$(y)|$(r)|$(t)|$(f)")
+          @constraint(model,
+          Vars.ProductionByTechnologyAnnual[y,t,f,r] <= Params.RegionalBaseYearProduction[r,t,f,y] + Vars.BaseYearBounds_TooLow[r,t,f,y],
+          base_name="BYB2_RegionalBaseYearProductionUpperBound|$(y)|$(r)|$(t)|$(f)")
         end
-      end  
+      end
     end end end
     print("Cstr: Baseyear : ",Dates.now()-start,"\n")
   end
@@ -1166,13 +1169,17 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
         for t ∈ setdiff(𝓣,Params.TagTechnologyToSubsets["StorageDummies"]) if (!isempty(Maps.Tech_MO[t]) && sum(Params.OutputActivityRatio[r,t,"Power",m,y] for m ∈ Maps.Tech_MO[t]) != 0)),
         base_name="PC2_PowerPeakingCapacity|$(y)|$(r)")
 
-      if y >Switch.set_peaking_startyear
+      if y > Switch.set_peaking_startyear
         @constraint(model,
-        Vars.PeakingCapacity[y,r] + (Switch.switch_peaking_with_trade == 1 ? sum(Vars.TotalTradeCapacity[y,"Power",rr,r] for rr ∈ 𝓡) : 0)
-        + (Switch.switch_peaking_with_storages == 1 ? sum(Vars.TotalCapacityAnnual[y,t,r] for t ∈ setdiff(𝓣,Params.TagTechnologyToSubsets["StorageDummies"]) if (sum(Params.OutputActivityRatio[r,t,"Power",m,y] for m ∈ Maps.Tech_MO[t]) != 0)) : 0)
-        >= Vars.PeakingDemand[y,r]*PeakingSlack,
-        base_name="PC3_PeakingConstraint|$(y)|$(r)")
+            Vars.PeakingCapacity[y,r] + 
+            (Switch.switch_peaking_with_trade == 1 ? sum(Vars.TotalTradeCapacity[y, "Power", rr, r] for rr ∈ 𝓡; init=0) : 0) +
+            (Switch.switch_peaking_with_storages == 1 ? 
+                sum(Vars.TotalCapacityAnnual[y, t, r] for t ∈ setdiff(𝓣, Params.TagTechnologyToSubsets["StorageDummies"])
+                    if (sum(Params.OutputActivityRatio[r, t, "Power", m, y] for m ∈ Maps.Tech_MO[t]; init=0) != 0); init=0) : 0)
+            >= Vars.PeakingDemand[y,r] * PeakingSlack,
+            base_name = "PC3_PeakingConstraint|$(y)|$(r)")
       end
+      
 
       if Switch.switch_peaking_with_storages == 1
         @constraint(model, Vars.PeakingCapacity[y,r] >= MinThermalShare*Vars.PeakingDemand[y,r]*PeakingSlack,

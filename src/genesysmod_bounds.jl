@@ -159,19 +159,19 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
     #Params.CapacityFactor[[x ∈ Subsets.Heat for x ∈ Params.CapacityFactor[!,:Technology]], :Value] .= 1
 
     for r ∈ Sets.Region_full for l ∈ Sets.Timeslice for y ∈ Sets.Year
-        Params.CapacityFactor[r,"HLI_Solar_Thermal",l,y] = Params.CapacityFactor[r,"RES_PV_Rooftop_Commercial",l,y]
-        Params.CapacityFactor[r,"HLR_Solar_Thermal",l,y] = Params.CapacityFactor[r,"RES_PV_Rooftop_Commercial",l,y]
-        Params.CapacityFactor[r,"RES_PV_Rooftop_Residential",l,y] = Params.CapacityFactor[r,"RES_PV_Rooftop_Commercial",l,y]
+        Params.CapacityFactor[r,"HLI_Solar_Thermal",l,y] = Params.CapacityFactor[r,"P_PV_Rooftop_Commercial",l,y]
+        Params.CapacityFactor[r,"HB_Solar_Thermal",l,y] = Params.CapacityFactor[r,"P_PV_Rooftop_Commercial",l,y]
+        Params.CapacityFactor[r,"P_PV_Rooftop_Residential",l,y] = Params.CapacityFactor[r,"P_PV_Rooftop_Commercial",l,y]
     end end end
     #
     # ####### No new capacity construction in 2015 #############
     #
     if Switch.switch_dispatch == 0
         for r ∈ Sets.Region_full
-            for t ∈ intersect(Sets.Technology, vcat(Params.TagTechnologyToSubsets["Transformation"],Params.TagTechnologyToSubsets["PowerSupply"], Params.TagTechnologyToSubsets["SectorCoupling"], Params.TagTechnologyToSubsets["StorageDummies"]))
+            for t ∈ intersect(Sets.Technology, vcat(Params.TagTechnologyToSubsets["Transformation"],Params.TagTechnologyToSubsets["PowerSupply"],Params.TagTechnologyToSubsets["Transport"], Params.TagTechnologyToSubsets["SectorCoupling"], Params.TagTechnologyToSubsets["StorageDummies"]))
                 JuMP.fix(Vars.NewCapacity[Switch.StartYear,t,r],0; force=true)
             end
-            for t ∈ intersect(Sets.Technology, vcat(Params.TagTechnologyToSubsets["Biomass"],Params.TagTechnologyToSubsets["CHP"],["HLR_Gas_Boiler","HLI_Gas_Boiler","HHI_BF_BOF",
+            for t ∈ intersect(Sets.Technology, vcat(Params.TagTechnologyToSubsets["Biomass"],Params.TagTechnologyToSubsets["CHP"],["HB_Gas_Boiler","HLI_Gas_Boiler","HHI_BF_BOF",
                 "HHI_Bio_BF_BOF","HHI_Scrap_EAF","HHI_DRI_EAF", "D_Gas_Methane"]))
                 if JuMP.is_fixed(Vars.NewCapacity[Switch.StartYear,t,r])
                     JuMP.unfix(Vars.NewCapacity[Switch.StartYear,t,r])
@@ -211,7 +211,7 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
     #
     # ####### Dispatch and Curtailment #############
     #
-    subs = vcat(Params.TagTechnologyToSubsets["Solar"], Params.TagTechnologyToSubsets["Wind"], ["RES_Hydro_Small"])
+    subs = vcat(Params.TagTechnologyToSubsets["Solar"], Params.TagTechnologyToSubsets["Wind"], ["P_Hydro_RoR"])
     Params.TagDispatchableTechnology[subs] = zeros(length(intersect(Sets.Technology,subs)))
     Params.CurtailmentCostFactor == 0.1
 
@@ -261,7 +261,7 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
         for y ∈ Sets.Year for r ∈ Sets.Region_full for t ∈ Params.TagTechnologyToSubsets["CCS"]
             Params.AvailabilityFactor[r,t,y] = 0
             Params.TotalAnnualMaxCapacity[r,t,y] = 0
-            for f ∈ Sets.Fuel
+            for f ∈ Maps.Tech_Fuel[t]
                 JuMP.fix(Vars.ProductionByTechnologyAnnual[y,t,f,r], 0; force = true)
             end
         end end end
@@ -311,8 +311,8 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
                 Params.ProductionChangeCost[r,t,y] = 0
             end =#
             for l ∈ Sets.Timeslice
-                Params.MinActiveProductionPerTimeslice[y,l,"Power","RES_Hydro_Large",r] = 0.1
-                Params.MinActiveProductionPerTimeslice[y,l,"Power","RES_Hydro_Small",r] = 0.05
+                Params.MinActiveProductionPerTimeslice[y,l,"Power","P_Hydro_Reservoir",r] = 0.1
+                Params.MinActiveProductionPerTimeslice[y,l,"Power","P_Hydro_RoR",r] = 0.05
             end
         end end
     end
@@ -330,14 +330,25 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
             if (i-1 + Switch.elmod_starthour/Switch.elmod_hourstep) % (24/Switch.elmod_hourstep) == 0
                 JuMP.fix(Vars.StorageLevelTSStart[s,y,Sets.Timeslice[i],r], 0; force = true)
             end
+#=         for s in intersect(Sets.Storage, ["S_CAES"])
+            if (i-1 + Switch.elmod_starthour/Switch.elmod_hourstep) % (48/Switch.elmod_hourstep) == 0
+                JuMP.fix(Vars.StorageLevelTSStart[s,y,Sets.Timeslice[i],r], 0; force = true)
+            end =#
         end
-    Params.CapacityFactor[r,"RES_PV_Rooftop_Commercial",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"RES_PV_Utility_Avg",Sets.Timeslice[i],y]
-    Params.CapacityFactor[r,"RES_PV_Rooftop_Residential",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"RES_PV_Utility_Avg",Sets.Timeslice[i],y]
-    Params.CapacityFactor[r,"RES_CSP",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"RES_PV_Utility_Opt",Sets.Timeslice[i],y]
-    Params.CapacityFactor[r,"HLR_Solar_Thermal",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"RES_PV_Utility_Avg",Sets.Timeslice[i],y]
-    Params.CapacityFactor[r,"HLI_Solar_Thermal",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"RES_PV_Utility_Avg",Sets.Timeslice[i],y]
+        Params.CapacityFactor[r,"P_PV_Rooftop_Commercial",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"P_PV_Utility_Avg",Sets.Timeslice[i],y]
+        Params.CapacityFactor[r,"P_PV_Rooftop_Residential",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"P_PV_Utility_Avg",Sets.Timeslice[i],y]
+        Params.CapacityFactor[r,"P_CSP",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"P_PV_Utility_Opt",Sets.Timeslice[i],y]
+        Params.CapacityFactor[r,"HB_Solar_Thermal",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"P_PV_Utility_Avg",Sets.Timeslice[i],y]
+        Params.CapacityFactor[r,"HLI_Solar_Thermal",Sets.Timeslice[i],y] = Params.CapacityFactor[r,"P_PV_Utility_Avg",Sets.Timeslice[i],y]
     end end end
 
+    #for r ∈ Sets.Region_full for s in Sets.Storage for y ∈ Sets.Year
+        #Params.CapitalCostStorage[r,s,y] = CapitalCostStorage[r,s,y]/365*8760/Switch.elmod_nthhour/(24/Switch.elmod_hourstep)
+
+        #@constraint(model, Vars.StorageUpperLimit[s,y,r] <= sum(Params.TotalCapacityAnnual[y,t,r] * Partams.StorageE2PRatio[s] * 0.0036 * 3 for t in Sets.Technology for m in Sets.Mode_of_operation if Params.TechnologyToStorage[t,s,m,y] != 0),
+        #base_name="Add_E2PRatio_up|$(s)|$(y)|$(r)")
+        #@constraint(model, Vars.StorageUpperLimit[s,y,r] >= sum(Params.TotalCapacityAnnual[y,t,r] * Partams.StorageE2PRatio[s] * 0.0036 * 0.5 for t in Sets.Technology for m in Sets.Mode_of_operation if Params.TechnologyToStorage[t,s,m,y] != 0),
+        #base_name="Add_E2PRatio_low|$(s)|$(y)|$(r)")
 end
 
 function YearlyDifferenceMultiplier(y,Sets);
