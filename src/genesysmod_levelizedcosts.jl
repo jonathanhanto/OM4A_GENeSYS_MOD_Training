@@ -48,12 +48,12 @@ function genesysmod_levelizedcosts(model,Sets, Params, VarPar, Vars, Switch, Set
     "H2"]
 
     ResourceTechnologies = [
-    "RES_Grass",
-    "RES_Wood",
-    "RES_Residues",
-    "RES_Paper_Cardboard",
-    "RES_Roundwood",
-    "RES_Biogas",
+    "R_Grass",
+    "R_Wood",
+    "R_Residues",
+    "R_Paper_Cardboard",
+    "R_Roundwood",
+    "R_Biogas",
     "Z_Import_Hardcoal",
     "R_Coal_Hardcoal",
     "R_Coal_Lignite",

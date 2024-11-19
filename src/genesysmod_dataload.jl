@@ -213,8 +213,8 @@ function genesysmod_dataload(Switch)
         ProductionChangeCost = create_daa(in_data, "Par_ProductionChangeCost",dbr,𝓣,𝓨)
         MinActiveProductionPerTimeslice = JuMP.Containers.DenseAxisArray(zeros(length(𝓨), length(𝓛), length(𝓕), length(𝓣), length(𝓡)), 𝓨, 𝓛, 𝓕, 𝓣, 𝓡)
     
-        MinActiveProductionPerTimeslice[:,:,"Power","RES_Hydro_Large",:] .= 0.1
-        MinActiveProductionPerTimeslice[:,:,"Power","RES_Hydro_Small",:] .= 0.05
+        MinActiveProductionPerTimeslice[:,:,"Power","P_Hydro_Reservoir",:] .= 0.1
+        MinActiveProductionPerTimeslice[:,:,"Power","P_Hydro_RoR",:] .= 0.05
     else
         RampingUpFactor = nothing
         RampingDownFactor = nothing

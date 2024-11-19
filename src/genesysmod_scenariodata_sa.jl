@@ -38,6 +38,11 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
     Params.AvailabilityFactor[r,"Z_Import_Gas",2018] = 0
   end
 
+    ######Availability Factor Gas to zero
+  for r ∈ Sets.Region_full for y ∈ Sets.Year
+    Params.AvailabilityFactor[r,"CHP_Coal_Hardcoal_CCS",y] = 0
+  end end
+
 
 
   ####################Capacity in 2025 Constraint ##############################################
