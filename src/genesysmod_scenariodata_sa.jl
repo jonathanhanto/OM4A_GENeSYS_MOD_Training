@@ -241,6 +241,32 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
   base_name="JH_Gas_6_Restriction_Total_2030")
   #####  
 
+  ###### H2 Export Caps
+  @constraint(model, 
+  sum(Vars.UseByTechnologyAnnual[2025,"Export_H2","H2", r] for r in Sets.Region_full) == 0, 
+  base_name="JG_H2_Export_Cap_2025")
+  
+  @constraint(model, 
+  sum(Vars.UseByTechnologyAnnual[2030,"Export_H2","H2", r] for r in Sets.Region_full) <= 240, 
+  base_name="JG_H2_Export_Cap_2030")
+
+  @constraint(model, 
+  sum(Vars.UseByTechnologyAnnual[2035,"Export_H2","H2", r] for r in Sets.Region_full) <= 360, 
+  base_name="JG_H2_Export_Cap_2035")
+
+  @constraint(model, 
+  sum(Vars.UseByTechnologyAnnual[2040,"Export_H2","H2", r] for r in Sets.Region_full) <= 481, 
+  base_name="JG_H2_Export_Cap_2040")
+
+  @constraint(model, 
+  sum(Vars.UseByTechnologyAnnual[2045,"Export_H2","H2", r] for r in Sets.Region_full) <= 600, 
+  base_name="JG_H2_Export_Cap_2045")
+
+  @constraint(model, 
+  sum(Vars.UseByTechnologyAnnual[2050,"Export_H2","H2", r] for r in Sets.Region_full) <= 721, 
+  base_name="JG_H2_Export_Cap_2050")
+
+
   #No new PV technologies in 2018 & 2025
   #tracking not allowed
   for r ∈ Sets.Region_full
