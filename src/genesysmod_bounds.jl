@@ -211,7 +211,7 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
     #
     # ####### Dispatch and Curtailment #############
     #
-    subs = vcat(Params.TagTechnologyToSubsets["Solar"], Params.TagTechnologyToSubsets["Wind"], ["P_Hydro_RoR"])
+    subs = vcat(Params.TagTechnologyToSubsets["Solar"], Params.TagTechnologyToSubsets["Wind"], ["P_Hydro_Small"])
     Params.TagDispatchableTechnology[subs] = zeros(length(intersect(Sets.Technology,subs)))
     Params.CurtailmentCostFactor == 0.1
 

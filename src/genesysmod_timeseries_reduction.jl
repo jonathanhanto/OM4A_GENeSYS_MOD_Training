@@ -68,7 +68,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
     "WIND_OFFSHORE","WIND_OFFSHORE_SHALLOW","WIND_OFFSHORE_DEEP",
     "MOBILITY_PSNG",
     "HEAT_LOW", "HEAT_HIGH",
-    "HEAT_PUMP_AIR", "HEAT_PUMP_GROUND","HYDRO_ROR","PV_THSAT","PV_HSAT","PV_DAT","PV_VSAT", 
+    "HEAT_PUMP_AIR", "HEAT_PUMP_GROUND","Hydro_Small","PV_THSAT","PV_HSAT","PV_DAT","PV_VSAT", 
     "BPV_90", "BPV_OPT", "BPV_HSAT", "BPV_THSAT", "BPV_VSAT", "BPV_DAT"]
 
     sector_to_tech = Dict(
@@ -135,7 +135,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
     CountryData["HEAT_PUMP_AIR"] = CountryData_HeatPump_AirSource
     CountryData["HEAT_PUMP_GROUND"] = CountryData_HeatPump_GroundSource
     CountryData["MOBILITY_PSNG"] = CountryData_Mobility_Psng
-    CountryData["HYDRO_ROR"] = CountryData_Hydro_RoR
+    CountryData["Hydro_Small"] = CountryData_Hydro_RoR
 
     for cde ∈ Country_Data_Entries
         select!(CountryData[cde], Not([:HOUR]))
@@ -292,7 +292,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
         smoothing_range["HEAT_HIGH"] = 3
         smoothing_range["HEAT_PUMP_AIR"] = 3
         smoothing_range["HEAT_PUMP_GROUND"] = 3
-        smoothing_range["HYDRO_ROR"] = 3
+        smoothing_range["Hydro_Small"] = 3
     end
 
     # Every 49th hour
@@ -322,7 +322,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
         smoothing_range["HEAT_HIGH"] = 3
         smoothing_range["HEAT_PUMP_AIR"] = 3
         smoothing_range["HEAT_PUMP_GROUND"] = 3
-        smoothing_range["HYDRO_ROR"] = 3
+        smoothing_range["Hydro_Small"] = 3
     end
 
     # If very short time-spans are used (e.g. for testing) decrease smoothing range
@@ -422,7 +422,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
     sdp_list=["Power","Mobility_Passenger","Mobility_Freight","Heat_Buildings","Heat_Low_Industrial","Heat_Medium_Industrial","Heat_High_Industrial"]
     capf_list=["HB_Heatpump_Aerial","HB_Heatpump_Ground","P_PV_Utility_Opt","P_Wind_Onshore_Opt","P_Wind_Offshore_Transitional","P_Wind_Onshore_Avg","P_Wind_Offshore_Shallow","P_PV_Utility_Inf",
     "P_Wind_Onshore_Inf","P_Wind_Offshore_Deep","RES_PV_Utility_HSAT","RES_PV_Utility_THSAT","RES_PV_Utility_VSAT","RES_PV_Utility_DAT","RES_BPV_Utility_90", "RES_BPV_Utility_Opt", "RES_BPV_Utility_HSAT", 
-    "RES_BPV_Utility_THSAT", "RES_BPV_Utility_VSAT", "RES_BPV_Utility_DAT","P_Hydro_RoR"]
+    "RES_BPV_Utility_THSAT", "RES_BPV_Utility_VSAT", "RES_BPV_Utility_DAT","P_Hydro_Small"]
 
     SpecifiedDemandProfile = JuMP.Containers.DenseAxisArray(zeros(length(Sets.Region_full), length(Sets.Fuel), length(Timeslice), length(Sets.Year)), Sets.Region_full, Sets.Fuel, Timeslice, Sets.Year)
     CapacityFactor = JuMP.Containers.DenseAxisArray(ones(length(Sets.Region_full), length(Sets.Technology), length(Timeslice), length(Sets.Year)), Sets.Region_full, Sets.Technology, Timeslice, Sets.Year)
@@ -494,7 +494,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
                 CapacityFactor[r,"RES_BPV_Utility_VSAT",:,y] = ScaledCountryData["BPV_VSAT"][Timeslice,r]
                 CapacityFactor[r,"RES_BPV_Utility_DAT",:,y] = ScaledCountryData["BPV_DAT"][Timeslice,r]
 
-                CapacityFactor[r,"P_Hydro_RoR",:,y] = ScaledCountryData["HYDRO_ROR"][Timeslice,r]
+                CapacityFactor[r,"P_Hydro_Small",:,y] = ScaledCountryData["Hydro_Small"][Timeslice,r]
             else
                 CapacityFactor[r,"HB_Heatpump_Aerial",:,y] = CountryData["HEAT_PUMP_AIR"][:,r]
                 CapacityFactor[r,"HB_Heatpump_Ground",:,y] = CountryData["HEAT_PUMP_GROUND"][:,r]
@@ -523,7 +523,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
                 CapacityFactor[r,"RES_BPV_Utility_VSAT",:,y] = CountryData["BPV_VSAT"][:,r]
                 CapacityFactor[r,"RES_BPV_Utility_DAT",:,y] = CountryData["BPV_DAT"][:,r]
 
-                CapacityFactor[r,"P_Hydro_RoR",:,y] = CountryData["HYDRO_ROR"][:,r]
+                CapacityFactor[r,"P_Hydro_Small",:,y] = CountryData["Hydro_Small"][:,r]
             end
         end
     end
