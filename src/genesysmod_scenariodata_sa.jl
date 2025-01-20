@@ -366,12 +366,23 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
     end end
   end
 
-  #=JuMP.fix(Vars.ProductionByTechnologyAnnual[2050,"Export_H2","H2","SA-EC"],10; force=true)
 
-  @constraint(model, 
-  sum(Vars.ProductionByTechnologyAnnual[y,"Export_H2","H2",r] for y in Sets.Year, r in Sets.Region_full) >= 100, 
-  base_name="KL_ExportTest")
-  =#
+  #h2 Prices
+  for r ∈ Sets.Region_full
+    Params.VariableCost[r, "Export_H2", 1, 2018] = Switch.switch_h2prices[1]*-8.3240740741
+    Params.VariableCost[r, "Export_H2", 1, 2025] = Switch.switch_h2prices[2]*-8.3240740741
+    Params.VariableCost[r, "Export_H2", 1, 2030] = Switch.switch_h2prices[3]*-8.3240740741
+    Params.VariableCost[r, "Export_H2", 1, 2035] = Switch.switch_h2prices[4]*-8.3240740741
+    Params.VariableCost[r, "Export_H2", 1, 2040] = Switch.switch_h2prices[5]*-8.3240740741
+    Params.VariableCost[r, "Export_H2", 1, 2045] = Switch.switch_h2prices[6]*-8.3240740741
+    Params.VariableCost[r, "Export_H2", 1, 2050] = Switch.switch_h2prices[7]*-8.3240740741
+  end
+  #JuMP.fix(Vars.ProductionByTechnologyAnnual[2050,"Export_H2","H2","SA-EC"],10; force=true)
+
+  #=@constraint(model, 
+  sum(Vars.UseByTechnologyAnnual[y,"Export_H2","H2",r] for y in Sets.Year, r in Sets.Region_full) >= 1000, 
+  base_name="KL_ExportTest")=#
+  
 
 end
 
