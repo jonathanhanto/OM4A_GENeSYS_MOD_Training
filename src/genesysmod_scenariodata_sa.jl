@@ -22,6 +22,18 @@ Internal function used in the run process to set run settings such as dicount ra
 """
 function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
   
+ #### Sensitivity
+  for y ∈ Sets.Year for r ∈ Sets.Region_full
+    Params.CapitalCost[r,"X_Electrolysis",y]=Switch.switch_S1*Params.CapitalCost[r,"X_Electrolysis",y]
+  end end 
+
+  for y ∈ Sets.Year for r ∈ Sets.Region_full
+    Params.CapitalCost[r,"RES_PV_Utility_HSAT",y]=Switch.switch_S2*Params.CapitalCost[r,"RES_PV_Utility_HSAT",y]
+    Params.CapitalCost[r,"RES_PV_Utility_THSAT",y]=Switch.switch_S2*Params.CapitalCost[r,"RES_PV_Utility_THSAT",y]
+    Params.CapitalCost[r,"RES_PV_Utility_VSAT",y]=Switch.switch_S2*Params.CapitalCost[r,"RES_PV_Utility_VSAT",y]
+    Params.CapitalCost[r,"RES_PV_Utility_DAT",y]=Switch.switch_S2*Params.CapitalCost[r,"RES_PV_Utility_DAT",y]
+  end end 
+
   for f ∈ Sets.Fuel for r ∈ Sets.Region_full for rr ∈ Sets.Region_full
     Params.TradeCapacityGrowthCosts[r,rr,"Gas_Natural"] = 0.0039
     Params.TradeCapacityGrowthCosts[r,rr,"H2"] = 0.0053
