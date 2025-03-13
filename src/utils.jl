@@ -66,7 +66,7 @@ values are intialized to 0. If copy world is true, the value for the region worl
 If inherit_base_world is 1, missing data will be fetched from the base region if they exist
 and again from the world region if necessary.
 """
-function create_daa(in_data::XLSX.XLSXFile, tab_name, els...;inherit_base_world=false,copy_world=false, base_region="DE") # els contains the Sets, col_names is the name of the columns in the df as symbols
+function create_daa(in_data::XLSX.XLSXFile, tab_name, els...;inherit_base_world=false,copy_world=false, base_region="UG-C") # els contains the Sets, col_names is the name of the columns in the df as symbols
     df = DataFrame(XLSX.gettable(in_data[tab_name];first_row=1))
     # Initialize all combinations to zero:
     A = JuMP.Containers.DenseAxisArray(
@@ -165,7 +165,7 @@ end
 """
 Create dense axis array initialized at a given value. 
 """
-function create_daa_init(in_data, tab_name,init_value=0, els...;inherit_base_world=false,copy_world=false, base_region="DE") # els contains the Sets, col_names is the name of the columns in the df as symbols
+function create_daa_init(in_data, tab_name,init_value=0, els...;inherit_base_world=false,copy_world=false, base_region="UG-C") # els contains the Sets, col_names is the name of the columns in the df as symbols
     df = DataFrame(XLSX.gettable(in_data[tab_name];first_row=1))
     # Initialize all combinations to zero:
     A = JuMP.Containers.DenseAxisArray(
