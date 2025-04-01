@@ -816,6 +816,7 @@ struct Switch <: InputClass
     extr_str_results ::String
     extr_str_dispatch ::String
     switch_reserve ::Int16
+    switch_cooking ::Int8
 end
 
 """
