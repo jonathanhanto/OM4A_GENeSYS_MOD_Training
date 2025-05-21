@@ -174,12 +174,12 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
     #
     # ####### No new capacity construction in 2015 #############
     #
-    if Switch.switch_dispatch == 0
+    if Switch.switch_dispatch == NoDispatch()
         for r ∈ Sets.Region_full
-            for t ∈ intersect(Sets.Technology, vcat(Params.Tags.TagTechnologyToSubsets["Transformation"],Params.Tags.TagTechnologyToSubsets["PowerSupply"], Params.Tags.TagTechnologyToSubsets["SectorCoupling"], Params.Tags.TagTechnologyToSubsets["StorageDummies"]))
+            for t ∈ intersect(Sets.Technology, vcat(Params.Tags.TagTechnologyToSubsets["PowerSupply"], Params.Tags.TagTechnologyToSubsets["SectorCoupling"], Params.Tags.TagTechnologyToSubsets["StorageDummies"], Params.Tags.TagTechnologyToSubsets["Transport"], Params.Tags.TagTechnologyToSubsets["CHP"]))
                 JuMP.fix(Vars.NewCapacity[Switch.StartYear,t,r],0; force=true)
             end
-            for t ∈ intersect(Sets.Technology, vcat(Params.Tags.TagTechnologyToSubsets["Biomass"],Params.Tags.TagTechnologyToSubsets["CHP"],["HLR_Gas_Boiler","HLI_Gas_Boiler","HHI_BF_BOF",
+            for t ∈ intersect(Sets.Technology, vcat(Params.Tags.TagTechnologyToSubsets["Biomass"],["HLR_Gas_Boiler","HLI_Gas_Boiler","HHI_BF_BOF",
                 "HHI_Bio_BF_BOF","HHI_Scrap_EAF","HHI_DRI_EAF", "D_Gas_Methane"]))
                 if JuMP.is_fixed(Vars.NewCapacity[Switch.StartYear,t,r])
                     JuMP.unfix(Vars.NewCapacity[Switch.StartYear,t,r])
