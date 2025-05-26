@@ -958,65 +958,37 @@ function genesysmod_results(model,Sets, Params, VarPar, Vars, Switch, Settings, 
     select!(df_tmp2,colnames)
     append!(output_energydemandstatistics, df_tmp2)
 
-    ####byb1 % 2
+    function get_baseyear_bounds_values(Sets, Vars)
+        rows = []
 
-    function byb1_duals_from_model(model, Switch, extr_str)
-        df_raw = genesysmod_getdualsbyname(model, Switch, extr_str, "BYB1_RegionalBaseYearProductionLowerBound")
-    
-        # Split and filter only those with correct parts
-        parts = [split(n, '|') for n in df_raw.names]
-        df_valid = df_raw[[length(p) == 5 for p in parts], :]
-        parts = [p for p in parts if length(p) == 5]
-    
-        # Construct new DataFrame
-        df = DataFrame(
-            constraint_type = getindex.(parts, 1),
-            year = parse.(Int, getindex.(parts, 2)),
-            region = getindex.(parts, 3),
-            technology = getindex.(parts, 4),
-            fuel = getindex.(parts, 5),
-            value = df_valid.values
-        )
-    
-        return df
-    end
-    
-    
+        for y ∈ Sets.Year, t ∈ Sets.Technology, f ∈ Sets.Fuel, r ∈ Sets.Region_full
+            val_low = try
+                value(Vars.BaseYearBounds_TooLow[r, t, f, y])
+            catch
+                missing
+            end
+            val_high = try
+                value(Vars.BaseYearBounds_TooHigh[r, t, f, y])
+            catch
+                missing
+            end
 
-    function byb2_duals_from_model(model, Switch, extr_str)
-        df_raw = genesysmod_getdualsbyname(model, Switch, extr_str, "BYB2_RegionalBaseYearProductionUpperBound")
-    
-        # Split and filter only those with correct parts
-        parts = [split(n, '|') for n in df_raw.names]
-        df_valid = df_raw[[length(p) == 5 for p in parts], :]
-        parts = [p for p in parts if length(p) == 5]
-    
-        # Construct new DataFrame
-        df = DataFrame(
-            constraint_type = getindex.(parts, 1),
-            year = parse.(Int, getindex.(parts, 2)),
-            region = getindex.(parts, 3),
-            technology = getindex.(parts, 4),
-            fuel = getindex.(parts, 5),
-            value = df_valid.values
-        )
-    
-        return df
+            if val_low != 0 && val_low !== missing
+                push!(rows, (type = "BaseYearBounds_TooLow", year = y, region = r, technology = t, fuel = f, value = val_low))
+            end
+            if val_high != 0 && val_high !== missing
+                push!(rows, (type = "BaseYearBounds_TooHigh", year = y, region = r, technology = t, fuel = f, value = val_high))
+            end
+        end
+
+        return DataFrame(rows)
     end
 
+    if Switch.switch_base_year_bounds_debugging == 1
+        df_byb_bounds = get_baseyear_bounds_values(Sets, Vars)
+        CSV.write(joinpath(Switch.resultdir[], "output_BYB_bounds.csv"), df_byb_bounds)
+    end 
     
-
-    #### Excel Output Sheet Definition and Export of GDX
-    ####
-    df_byb1 = byb1_duals_from_model(model, Switch, extr_str)
-    df_byb2 = byb2_duals_from_model(model, Switch, extr_str)
-
-    CSV.write(joinpath(Switch.resultdir[], "output_duals_BYB1_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), df_byb1)
-    CSV.write(joinpath(Switch.resultdir[], "output_duals_BYB2_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), df_byb2)
-
-    
-    CSV.write("output_BYB1.csv", df_byb1)
-    CSV.write("output_BYB2.csv", df_byb2)
     CSV.write(joinpath(Switch.resultdir[],"output_production_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_energy_balance[output_energy_balance.Value .!= 0, :])
     CSV.write(joinpath(Switch.resultdir[],"output_annual_production_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_energy_balance_annual[output_energy_balance_annual.Value .!= 0, :])
     CSV.write(joinpath(Switch.resultdir[],"output_capacity_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_capacity[output_capacity.Value .!= 0, :])
