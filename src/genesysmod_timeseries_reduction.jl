@@ -335,8 +335,14 @@ function timeseries_reduction!(Params, Sets, Switch)
         tmp = ScaledCountryData["LOAD"] ./ length(Sets.Timeslice)
         for r ∈ Sets.Region_full
             for f ∈ Sets.Fuel
-                if sum(Params.SpecifiedAnnualDemand[r,f,:]) != 0
-                    Params.SpecifiedDemandProfile[r,f,:,Sets.Year[1]] = tmp[Sets.Timeslice,r]
+                for y ∈ Sets.Year
+                    if sum(Params.SpecifiedAnnualDemand[r, f, y]) != 0
+                        # Normalize over all timeslices
+                        total_load = sum(ScaledCountryData["LOAD"][l, r] for l in Sets.Timeslice)
+                        for l ∈ Sets.Timeslice
+                            Params.SpecifiedDemandProfile[r, f, l, y] = ScaledCountryData["LOAD"][l, r] / total_load
+                        end
+                    end
                 end
             end
         end
