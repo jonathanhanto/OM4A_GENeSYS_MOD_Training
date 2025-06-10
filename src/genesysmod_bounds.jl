@@ -187,17 +187,17 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
             end
         end
 
-        if "CHP" ∈ Sets.Sector
-            for t ∈ Sets.Technology
-                if Params.Tags.TagTechnologyToSector[t,"CHP"] == 1
-                    for r ∈ Sets.Region_full
-                        if JuMP.is_fixed(model[:NewCapacity][Switch.StartYear,t,r])
-                            JuMP.unfix(model[:NewCapacity][Switch.StartYear,t,r])
-                        end
-                    end
-                end
-            end
-        end
+        #if "CHP" ∈ Sets.Sector
+        #    for t ∈ Sets.Technology
+        #        if Params.Tags.TagTechnologyToSector[t,"CHP"] == 1
+        #            for r ∈ Sets.Region_full
+        #                if JuMP.is_fixed(model[:NewCapacity][Switch.StartYear,t,r])
+        #                    JuMP.unfix(model[:NewCapacity][Switch.StartYear,t,r])
+        #                end
+        #            end
+        #        end
+        #    end
+        #end
     end
 
 
