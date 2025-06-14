@@ -219,7 +219,7 @@ function genesysmod_results(model,Sets, Params, VarPar, Vars, Switch, Settings, 
     df_residual_capacity[!,:Type] .= "ResidualCapacity"
     df_residual_capacity[!,:PathwayScenario] .= "$(Switch.emissionPathway)_$(Switch.emissionScenario)"
 
-    df_total_capacity = convert_jump_container_to_df(value.(Vars.TotalCapacityAnnual[:,tmp_techs,:]);dim_names=[:Year, :Technology, :Region])
+    df_total_capacity = convert_jump_container_to_df(value.(Vars.TotalCapacityAnnual[:,Sets.Technology,:]);dim_names=[:Year, :Technology, :Region])
     df_total_capacity[!,:Type] .= "TotalCapacity"
     df_total_capacity[!,:PathwayScenario] .= "$(Switch.emissionPathway)_$(Switch.emissionScenario)"
 
@@ -954,6 +954,36 @@ function genesysmod_results(model,Sets, Params, VarPar, Vars, Switch, Settings, 
     ####
     #### Excel Output Sheet Definition and Export of GDX
     ####
+    function get_baseyear_bounds_values(Sets, Vars)
+        rows = []
+
+        for y ∈ Sets.Year, t ∈ Sets.Technology, f ∈ Sets.Fuel, r ∈ Sets.Region_full
+            val_low = try
+                value(Vars.BaseYearBounds_TooLow[r, t, f, y])
+            catch
+                missing
+            end
+            val_high = try
+                value(Vars.BaseYearBounds_TooHigh[r, t, f, y])
+            catch
+                missing
+            end
+
+            if val_low != 0 && val_low !== missing
+                push!(rows, (type = "BaseYearBounds_TooLow", year = y, region = r, technology = t, fuel = f, value = val_low))
+            end
+            if val_high != 0 && val_high !== missing
+                push!(rows, (type = "BaseYearBounds_TooHigh", year = y, region = r, technology = t, fuel = f, value = val_high))
+            end
+        end
+
+        return DataFrame(rows)
+    end
+
+    if Switch.switch_base_year_bounds_debugging == 1
+        df_byb_bounds = get_baseyear_bounds_values(Sets, Vars)
+        CSV.write(joinpath(Switch.resultdir, "output_BYB_bounds.csv"), df_byb_bounds)
+    end 
 
     CSV.write(joinpath(Switch.resultdir,"output_production_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_energy_balance[output_energy_balance.Value .!= 0, :])
     CSV.write(joinpath(Switch.resultdir,"output_annual_production_$(Switch.model_region)_$(Switch.emissionPathway)_$(Switch.emissionScenario)_$(extr_str).csv"), output_energy_balance_annual[output_energy_balance_annual.Value .!= 0, :])

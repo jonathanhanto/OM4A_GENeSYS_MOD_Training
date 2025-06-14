@@ -22,6 +22,135 @@ Internal function used in the run process to set run settings such as dicount ra
 """
 function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
   
+  #####Steel Scenario Demand #####
+  ###Low Demand Scenario
+  ##Crude Steel & DR_Iron_H2
+  if Switch.switch_steel_demand == 0
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2025] = 1.531
+    Params.SpecifiedAnnualDemand["SA-GA","Crude_Steel",2025] = 2.858
+    Params.SpecifiedAnnualDemand["SA-MP","Crude_Steel",2025] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2025] = 0
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 0
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2035] = 0
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2040] = 0
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2045] = 0
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2050] = 0
+  end
+
+    ###Medium Demand Scenario
+    ##Crude Steel & DR_Iron_H2
+  if Switch.switch_steel_demand == 1
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2025] = 1.531
+    Params.SpecifiedAnnualDemand["SA-GA","Crude_Steel",2025] = 2.858
+    Params.SpecifiedAnnualDemand["SA-MP","Crude_Steel",2025] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2025] = 0
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 0.5
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2035] = 1.2
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2040] = 1.9
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2045] = 2.6
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2050] = 3.3
+  end
+
+      ###High Demand Scenario
+      ##Crude Steel & DR_Iron_H2
+  if Switch.switch_steel_demand == 2
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2025] = 1.531
+    Params.SpecifiedAnnualDemand["SA-GA","Crude_Steel",2025] = 2.858
+    Params.SpecifiedAnnualDemand["SA-MP","Crude_Steel",2025] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2025] = 0
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 1
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2035] = 2.4
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2040] = 3.8
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2045] = 5.2
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 1.531
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 2.858
+    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 0.616541
+    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2050] = 6.6
+  end
+
+  ####Steel Inclusion ####
+  ####Constraints the use of Scrap Steel to 40% of overall Crude Steel demand###
+  for y ∈ Sets.Year
+  @constraint(model,
+    sum(Vars.UseByTechnologyAnnual[y, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full) <= 0.40 * sum(Vars.ProductionByTechnologyAnnual[y, t, "Crude_Steel", r]
+    for t in ["IND_Steel_2_EAF", "IND_Steel_2_BF_BOF", "IND_Steel_2_BF_BOF_CCS"]
+    for r in Sets.Region_full),
+    base_name = "Limit_Scrap_Share")
+  end
+  #for y ∈ Sets.Year
+  #@constraint(model, 
+  #  0.6*sum(Vars.ProductionByTechnologyAnnual[y,"IND_Steel_1_Scrap_Steel","Scrap_Steel", r] for r in Sets.Region_full) >= sum(Params.SpecifiedAnnualDemand[r,"Crude_Steel",y] for r in Sets.Region_full), 
+  #  base_name="JH_Scrap_Steel_Constraint")
+  #end   
+  #####
+
+  ####Steel Demand Zero####
+  #for y ∈ Sets.Year 
+  #  Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",y] = 0
+  #end
+  #####
+
+  ## Iron Ore Production
+  @constraint(model, 
+  sum(Vars.ProductionByTechnologyAnnual[y,"IND_Iron_Ore_Prod","Iron_Ore",r] 
+      for y in Sets.Year, r in Sets.Region_full if r != "SA-NC") <= 0, 
+  base_name="JH_Iron_Ore_AllYear")
+  
+  @constraint(model, 
+    sum(Vars.ProductionByTechnologyAnnual[y,"IND_Iron_Ore_Prod","Iron_Ore","SA-NC"] for y in Sets.Year) <= 60, 
+  base_name="JH_Iron_Ore_AllYear")
+  
+
+  @constraint(model,
+    sum(Vars.NewCapacity[2025,"IND_Steel_1_DRI",r] for r in Sets.Region_full) <= 0,
+  base_name="JH_IND_Steel_Dri_2025")
+
+  @constraint(model,
+    sum(Vars.NewCapacity[2025,"IND_Steel_2_EAF",r] for r in Sets.Region_full) <= 0,
+  base_name="JH_IND_Steel_Eaf_2025")
+
   for f ∈ Sets.Fuel for r ∈ Sets.Region_full for rr ∈ Sets.Region_full
     Params.TradeCapacityGrowthCosts[r,rr,"Gas_Natural"] = 0.0039
     Params.TradeCapacityGrowthCosts[r,rr,"H2"] = 0.0053
@@ -33,12 +162,8 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
     Params.GrowthRateTradeCapacity[r,rr,"Gas_Natural",y] = 0.1
     Params.GrowthRateTradeCapacity[r,rr,"H2",y] = 0.15
   end end end end
-  ######Availability Factor Gas to zero
-  for r ∈ Sets.Region_full 
-    Params.AvailabilityFactor[r,"Z_Import_Gas",2018] = 0
-  end
 
-    ######Availability Factor Gas to zero
+  
   for r ∈ Sets.Region_full for y ∈ Sets.Year
     Params.AvailabilityFactor[r,"CHP_Coal_Hardcoal_CCS",y] = 0
   end end

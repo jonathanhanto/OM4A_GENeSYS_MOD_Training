@@ -90,7 +90,7 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
         Params.OutputActivityRatio[:,"Infeasibility_HLI","Heat_Low_Industrial",1,:] .= 1
         Params.OutputActivityRatio[:,"Infeasibility_HMI","Heat_Medium_Industrial",1,:] .= 1
         Params.OutputActivityRatio[:,"Infeasibility_HHI","Heat_High_Industrial",1,:] .= 1
-        Params.OutputActivityRatio[:,"Infeasibility_HRI","Heat_Low_Residential",1,:] .= 1
+        Params.OutputActivityRatio[:,"Infeasibility_HRI","Heat_Buildings",1,:] .= 1
         Params.OutputActivityRatio[:,"Infeasibility_Power","Power",1,:] .= 1
         Params.OutputActivityRatio[:,"Infeasibility_Mob_Passenger","Mobility_Passenger",1,:] .= 1 
         Params.OutputActivityRatio[:,"Infeasibility_Mob_Freight","Mobility_Freight",1,:] .= 1 
@@ -168,7 +168,7 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
     #
     if Switch.switch_dispatch == 0
         for r ∈ Sets.Region_full
-            for t ∈ intersect(Sets.Technology, vcat(Params.TagTechnologyToSubsets["PowerSupply"], Params.TagTechnologyToSubsets["SectorCoupling"], Params.TagTechnologyToSubsets["StorageDummies"]))
+            for t ∈ intersect(Sets.Technology, vcat(Params.TagTechnologyToSubsets["Transformation"],Params.TagTechnologyToSubsets["PowerSupply"], Params.TagTechnologyToSubsets["SectorCoupling"], Params.TagTechnologyToSubsets["StorageDummies"]))
                 JuMP.fix(Vars.NewCapacity[Switch.StartYear,t,r],0; force=true)
             end
             for t ∈ intersect(Sets.Technology, vcat(Params.TagTechnologyToSubsets["Biomass"],Params.TagTechnologyToSubsets["CHP"],["HB_Gas_Boiler","HLI_Gas_Boiler","HHI_BF_BOF",
