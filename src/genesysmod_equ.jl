@@ -1224,7 +1224,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps; 
         base_name="PC3_PeakingConstraint|$(y)|$(r)")
       end
 
-      if Switch.switch_peaking_with_storages == 1
+      if Switch.switch_peaking_with_storages == 1 && y > Switch.set_peaking_startyear
         @constraint(model, Vars.PeakingCapacity[y,r] >= MinThermalShare*Vars.PeakingDemand[y,r]*PeakingSlack,
         base_name="PC3b_PeakingConstraint_Thermal|$(y)|$(r)"
         )
