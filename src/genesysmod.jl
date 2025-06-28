@@ -37,7 +37,7 @@ function genesysmod(;elmod_daystep, elmod_hourstep, solver, DNLPsolver, year=201
     employment_data_file = "", elmod_nthhour = 0, elmod_starthour = 8, 
     elmod_dunkelflaute = 0, switch_raw_results = 0, switch_processed_results = 0, write_reduced_timeserie = 1,
     switch_iis = 1, switch_base_year_bounds_debugging = 0, switch_LCOE_calc=0, 
-    switch_2degree=0, switch_PVtracking = 0, switch_bifacialPV = 0, switch_highH2 = 0, switch_steel_demand=0,)
+    switch_2degree=0, switch_PVtracking = 0, switch_bifacialPV = 0, switch_highH2 = 0, switch_steel_demand="low",)
 
     if elmod_nthhour != 0 && (elmod_daystep !=0 || elmod_hourstep !=0)
         @warn "Both elmod_nthhour and elmod_daystep/elmod_hourstep are defined.
@@ -147,6 +147,9 @@ function genesysmod(;elmod_daystep, elmod_hourstep, solver, DNLPsolver, year=201
     #
     # ####### CPLEX Options #############
     #
+    println("DEBUG: switch_steel_demand = ", Switch.switch_steel_demand)
+    println("Final value for 2030 DR Iron: ", Params.SpecifiedAnnualDemand["SA-WC", "DR_Iron_H2", 2030])
+    #genesysmod_employment(model,Params,Emp_Sets)
 
     set_optimizer(model, solver)
 

@@ -25,90 +25,6 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
   #####Steel Scenario Demand #####
   ###Low Demand Scenario
   ##Crude Steel & DR_Iron_H2
-  if Switch.switch_steel_demand == 0
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2025] = 1.531
-    Params.SpecifiedAnnualDemand["SA-GA","Crude_Steel",2025] = 2.858
-    Params.SpecifiedAnnualDemand["SA-MP","Crude_Steel",2025] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2025] = 0
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 0
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2035] = 0
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2040] = 0
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2045] = 0
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2050] = 0
-  end
-
-    ###Medium Demand Scenario
-    ##Crude Steel & DR_Iron_H2
-  if Switch.switch_steel_demand == 1
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2025] = 1.531
-    Params.SpecifiedAnnualDemand["SA-GA","Crude_Steel",2025] = 2.858
-    Params.SpecifiedAnnualDemand["SA-MP","Crude_Steel",2025] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2025] = 0
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 0.5
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2035] = 1.2
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2040] = 1.9
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2045] = 2.6
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2050] = 3.3
-  end
-
-      ###High Demand Scenario
-      ##Crude Steel & DR_Iron_H2
-  if Switch.switch_steel_demand == 2
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2025] = 1.531
-    Params.SpecifiedAnnualDemand["SA-GA","Crude_Steel",2025] = 2.858
-    Params.SpecifiedAnnualDemand["SA-MP","Crude_Steel",2025] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2025] = 0
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 1
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2035] = 2.4
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2040] = 3.8
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2045] = 5.2
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 1.531
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 2.858
-    Params.SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 0.616541
-    Params.SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2050] = 6.6
-  end
 
   ####Steel Inclusion ####
   ####Constraints the use of Scrap Steel to 40% of overall Crude Steel demand###
@@ -119,6 +35,33 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
     for r in Sets.Region_full),
     base_name = "Limit_Scrap_Share")
   end
+  ## BF-BOF CCS constraint
+  for y ∈ Sets.Year
+  @constraint(model, 
+  sum(Vars.TotalCapacityAnnual[y,"IND_Steel_2_BF_BOF_CCS",r] 
+      for y in Sets.Year, r in Sets.Region_full if r != "SA-GA") <= 0, 
+  base_name="JH_CCS_BOF_Constraint")
+  end
+
+
+  for y in Sets.Year
+      if y > 2025
+          JuMP.fix(Vars.TotalCapacityAnnual[y, "IND_Steel_2_BF_BOF", "SA-GA"], 0.0; force = true)
+      end
+
+      # CCS can only be 0 or 3.2
+      @constraint(model,
+          Vars.TotalCapacityAnnual[y, "IND_Steel_2_BF_BOF_CCS", "SA-GA"] <= 3.2,
+          base_name = "CCS_max_cap_$(y)")
+
+      # Enforce total never exceeds 3.2 (only one active at a time)
+      @constraint(model,
+          Vars.TotalCapacityAnnual[y, "IND_Steel_2_BF_BOF", "SA-GA"] +
+          Vars.TotalCapacityAnnual[y, "IND_Steel_2_BF_BOF_CCS", "SA-GA"] <= 3.2,
+          base_name = "BFBOF_CCS_total_cap_$(y)")
+  end
+
+
   #for y ∈ Sets.Year
   #@constraint(model, 
   #  0.6*sum(Vars.ProductionByTechnologyAnnual[y,"IND_Steel_1_Scrap_Steel","Scrap_Steel", r] for r in Sets.Region_full) >= sum(Params.SpecifiedAnnualDemand[r,"Crude_Steel",y] for r in Sets.Region_full), 

@@ -719,7 +719,7 @@ struct Switch <: InputClass
     switch_PVtracking ::Int8
     switch_bifacialPV ::Int8
     switch_highH2 ::Int8
-    switch_steel_demand :: Int8
+    switch_steel_demand :: String
 end
 
 """

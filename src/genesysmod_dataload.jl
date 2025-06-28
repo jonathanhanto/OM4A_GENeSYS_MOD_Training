@@ -105,7 +105,86 @@ function genesysmod_dataload(Switch)
 
     CapacityToActivityUnit = create_daa(in_data, "Par_CapacityToActivityUnit",dbr, 𝓣)
     RegionalBaseYearProduction = create_daa(in_data, "Par_RegionalBaseYearProduction",dbr, 𝓡, 𝓣, 𝓕, 𝓨)
+
     SpecifiedAnnualDemand = create_daa(in_data, "Par_SpecifiedAnnualDemand",dbr, 𝓡, 𝓕, 𝓨)
+       if Switch.switch_steel_demand == "low"
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2025] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2025] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2025] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2025] = 0
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2030] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2030] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 0
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2035] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2035] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2035] = 0
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2040] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2040] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2040] = 0
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2045] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2045] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2045] = 0
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2050] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2050] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2050] = 0
+    elseif Switch.switch_steel_demand == "medium"
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2025] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2025] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2025] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2025] = 0
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2030] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2030] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 0.5
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2035] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2035] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2035] = 1.2
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2040] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2040] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2040] = 1.9
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2045] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2045] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2045] = 2.6
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2050] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2050] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2050] = 3.3
+    elseif Switch.switch_steel_demand == "high"
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2025] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2025] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2025] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2025] = 0
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2030] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2030] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 1
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2035] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2035] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2035] = 2.4
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2040] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2040] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2040] = 3.8
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2045] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2045] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2045] = 5.2
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 1.531
+        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2050] = 2.858
+        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2050] = 0.616541
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2050] = 6.6
+    else
+        error("Invalid Switch.switch_steel_demand value: $(Switch.switch_steel_demand)")
+    end
 
     AnnualEmissionLimit = create_daa(in_data,"Par_AnnualEmissionLimit",dbr, 𝓔, 𝓨)
     AnnualExogenousEmission = create_daa(in_data,"Par_AnnualExogenousEmission",dbr, 𝓡, 𝓔, 𝓨)             
