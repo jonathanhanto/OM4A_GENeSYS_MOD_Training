@@ -400,6 +400,20 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
     Params.AnnualEmissionLimit["CO2", 2040] = 129    #40
     Params.AnnualEmissionLimit["CO2", 2045] = 62    #20
     Params.AnnualEmissionLimit["CO2", 2050] = 0     #### based on https://carbonbudgetcalculator.com/country.html?country=South%20Africa
+    Params.AnnualEmissionLimit["CO2_Steel", 2018] = Params.AnnualEmissionLimit["CO2", 2018] * 0.08  
+    Params.AnnualEmissionLimit["CO2_Steel", 2025] = Params.AnnualEmissionLimit["CO2", 2025] * 0.08   
+    Params.AnnualEmissionLimit["CO2_Steel", 2030] = Params.AnnualEmissionLimit["CO2", 2030] * 0.08  
+    Params.AnnualEmissionLimit["CO2_Steel", 2035] = Params.AnnualEmissionLimit["CO2", 2035] * 0.08   
+    Params.AnnualEmissionLimit["CO2_Steel", 2040] = Params.AnnualEmissionLimit["CO2", 2040] * 0.08   
+    Params.AnnualEmissionLimit["CO2_Steel", 2045] = Params.AnnualEmissionLimit["CO2", 2045] * 0.08   
+    Params.AnnualEmissionLimit["CO2_Steel", 2050] = Params.AnnualEmissionLimit["CO2", 2050] * 0.08 
+    Params.AnnualEmissionLimit["CO2", 2018] = Params.AnnualEmissionLimit["CO2", 2018] * 0.92 
+    Params.AnnualEmissionLimit["CO2", 2025] = Params.AnnualEmissionLimit["CO2", 2025] * 0.92 
+    Params.AnnualEmissionLimit["CO2", 2030] = Params.AnnualEmissionLimit["CO2", 2030] * 0.92  
+    Params.AnnualEmissionLimit["CO2", 2035] = Params.AnnualEmissionLimit["CO2", 2035] * 0.92   
+    Params.AnnualEmissionLimit["CO2", 2040] = Params.AnnualEmissionLimit["CO2", 2040] * 0.92    
+    Params.AnnualEmissionLimit["CO2", 2045] = Params.AnnualEmissionLimit["CO2", 2045] * 0.92    
+    Params.AnnualEmissionLimit["CO2", 2050] = Params.AnnualEmissionLimit["CO2", 2050] * 0.92
   end
 
   #hydrogen demand
