@@ -68,7 +68,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
     "WIND_OFFSHORE","WIND_OFFSHORE_SHALLOW","WIND_OFFSHORE_DEEP",
     "MOBILITY_PSNG",
     "HEAT_LOW", "HEAT_HIGH",
-    "Steel",
+    "CRUDE_STEEL",
     "HEAT_PUMP_AIR", "HEAT_PUMP_GROUND","Hydro_Small","PV_THSAT","PV_HSAT","PV_DAT","PV_VSAT", 
     "BPV_90", "BPV_OPT", "BPV_HSAT", "BPV_THSAT", "BPV_VSAT", "BPV_DAT"]
 
@@ -76,7 +76,8 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
         "Industry"=>"HEAT_HIGH",
         "Buildings"=>"HEAT_LOW",
         "Transportation"=>"MOBILITY_PSNG",
-        "Power"=>"LOAD")
+        "Power"=>"LOAD",
+        "Steel"=>"CRUDE_STEEL")
 
     Timeslice_Full = 1:8760
 
@@ -97,7 +98,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
     CountryData_Mobility_Psng = DataFrame(XLSX.gettable(hourly_data["TS_MOBILITY_PSNG"]))
     CountryData_Heat_Low = DataFrame(XLSX.gettable(hourly_data["TS_HEAT_LOW"]))
     CountryData_Heat_High = DataFrame(XLSX.gettable(hourly_data["TS_HEAT_HIGH"]))
-    CountryData_Steel = DataFrame(XLSX.gettable(hourly_data["TS_Steel"]))
+    CountryData_Crude_Steel = DataFrame(XLSX.gettable(hourly_data["TS_CRUDE_STEEL"]))
     CountryData_HeatPump_AirSource = DataFrame(XLSX.gettable(hourly_data["TS_HP_AIRSOURCE"]))
     CountryData_HeatPump_GroundSource = DataFrame(XLSX.gettable(hourly_data["TS_HP_GROUNDSOURCE"]))
     CountryData_Hydro_RoR = DataFrame(XLSX.gettable(hourly_data["TS_HYDRO_ROR"]))
@@ -134,7 +135,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
     CountryData["WIND_OFFSHORE_SHALLOW"] = CountryData_Wind_Offshore_Shallow
     CountryData["HEAT_LOW"] = CountryData_Heat_Low
     CountryData["HEAT_HIGH"] = CountryData_Heat_High
-    CountryData["Steel"] = CountryData_Steel
+    CountryData["CRUDE_STEEL"] = CountryData_Crude_Steel
     CountryData["HEAT_PUMP_AIR"] = CountryData_HeatPump_AirSource
     CountryData["HEAT_PUMP_GROUND"] = CountryData_HeatPump_GroundSource
     CountryData["MOBILITY_PSNG"] = CountryData_Mobility_Psng
@@ -222,6 +223,11 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
         end
         CountryData["HEAT_LOW"][!,r] = CountryData["HEAT_LOW"][!,r] / AverageCapacityFactor["HEAT_LOW"][1,r]
 
+        if sum(CountryData["CRUDE_STEEL"][l,r] for l ∈ Timeslice) != 0 
+            AverageCapacityFactor["CRUDE_STEEL"][1,r] = sum(CountryData["CRUDE_STEEL"][:,r])/8760
+        end
+        CountryData["CRUDE_STEEL"][!,r] = CountryData["CRUDE_STEEL"][!,r] / AverageCapacityFactor["CRUDE_STEEL"][1,r]
+
         for cde ∈ Country_Data_Entries
             if sum(CountryData[cde][l,r] for l ∈ Timeslice) != 0 
                 AverageCapacityFactor[cde][1,r] = sum(CountryData[cde][:,r])/8760
@@ -253,7 +259,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
     smoothing_range["MOBILITY_PSNG"] = 3
     smoothing_range["HEAT_LOW"] = 3
     smoothing_range["HEAT_HIGH"] = 3
-    smoothing_range["Steel"] = 3
+    smoothing_range["CRUDE_STEEL"] = 3
     smoothing_range["HEAT_PUMP_AIR"] = 3
     smoothing_range["HEAT_PUMP_GROUND"] = 3
     smoothing_range["HYDRO_ROR"] = 3
@@ -294,7 +300,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
         smoothing_range["MOBILITY_PSNG"] = 3
         smoothing_range["HEAT_LOW"] = 3
         smoothing_range["HEAT_HIGH"] = 3
-        smoothing_range["Steel"] = 3
+        smoothing_range["CRUDE_STEEL"] = 3
         smoothing_range["HEAT_PUMP_AIR"] = 3
         smoothing_range["HEAT_PUMP_GROUND"] = 3
         smoothing_range["Hydro_Small"] = 3
@@ -325,7 +331,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
         smoothing_range["MOBILITY_PSNG"] = 3
         smoothing_range["HEAT_LOW"] = 3
         smoothing_range["HEAT_HIGH"] = 3
-        smoothing_range["Steel"] = 3
+        smoothing_range["CRUDE_STEEL"] = 3
         smoothing_range["HEAT_PUMP_AIR"] = 3
         smoothing_range["HEAT_PUMP_GROUND"] = 3
         smoothing_range["Hydro_Small"] = 3
@@ -425,7 +431,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
 
     YearSplit = JuMP.Containers.DenseAxisArray(ones(length(Timeslice), length(Sets.Year)) * 1/length(Timeslice), Timeslice, Sets.Year)
 
-    sdp_list=["Power","Mobility_Passenger","Mobility_Freight","Heat_Buildings","Heat_Low_Industrial","Heat_Medium_Industrial","Heat_High_Industrial","Steel"]
+    sdp_list=["Power","Mobility_Passenger","Mobility_Freight","Heat_Buildings","Heat_Low_Industrial","Heat_Medium_Industrial","Heat_High_Industrial","Crude_Steel"]
     capf_list=["HB_Heatpump_Aerial","HB_Heatpump_Ground","P_PV_Utility_Opt","P_Wind_Onshore_Opt","P_Wind_Offshore_Transitional","P_Wind_Onshore_Avg","P_Wind_Offshore_Shallow","P_PV_Utility_Inf",
     "P_Wind_Onshore_Inf","P_Wind_Offshore_Deep","RES_PV_Utility_HSAT","RES_PV_Utility_THSAT","RES_PV_Utility_VSAT","RES_PV_Utility_DAT","RES_BPV_Utility_90", "RES_BPV_Utility_Opt", "RES_BPV_Utility_HSAT", 
     "RES_BPV_Utility_THSAT", "RES_BPV_Utility_VSAT", "RES_BPV_Utility_DAT","P_Hydro_Small"]
@@ -446,7 +452,27 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
     tmp["MOBILITY_PSNG"] = ScaledCountryData["MOBILITY_PSNG"] ./ combine(ScaledCountryData["MOBILITY_PSNG"], names(ScaledCountryData["MOBILITY_PSNG"]) .=> sum, renamecols=false)
     tmp["HEAT_LOW"] = ScaledCountryData["HEAT_LOW"] ./ combine(ScaledCountryData["HEAT_LOW"], names(ScaledCountryData["HEAT_LOW"]) .=> sum, renamecols=false)
     tmp["HEAT_HIGH"] = ScaledCountryData["HEAT_HIGH"] ./ combine(ScaledCountryData["HEAT_HIGH"], names(ScaledCountryData["HEAT_HIGH"]) .=> sum, renamecols=false)
+    let
+      steel = ScaledCountryData["CRUDE_STEEL"]
+      # steel_sum is a 1×|regions| DataFrame of sums
+      steel_sum = combine(steel, names(steel) .=> sum, renamecols=false)
 
+      tmp_steel = similar(steel)
+      n = length(Timeslice)
+
+      for r in Sets.Region_full
+        total = steel_sum[1, r]
+        if total > 0
+          # normal case: divide by the sum
+          tmp_steel[:, r] .= steel[:, r] ./ total
+        else
+          # fallback: flat/uniform distribution
+          tmp_steel[:, r] .= 1.0 / n
+        end
+      end
+
+      tmp["CRUDE_STEEL"] = tmp_steel
+    end
     for r ∈ Sets.Region_full 
         SpecifiedDemandProfile[r,"Mobility_Passenger",:,Sets.Year[1]] = tmp["MOBILITY_PSNG"][Timeslice,r]
         SpecifiedDemandProfile[r,"Mobility_Freight",:,Sets.Year[1]] = tmp["MOBILITY_PSNG"][Timeslice,r]
@@ -454,6 +480,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
         SpecifiedDemandProfile[r,"Heat_Buildings",:,Sets.Year[1]] = tmp["HEAT_HIGH"][Timeslice,r]
         SpecifiedDemandProfile[r,"Heat_Medium_Industrial",:,Sets.Year[1]] = tmp["HEAT_HIGH"][Timeslice,r]
         SpecifiedDemandProfile[r,"Heat_High_Industrial",:,Sets.Year[1]] = tmp["HEAT_HIGH"][Timeslice,r]
+        SpecifiedDemandProfile[r,"Crude_Steel",:,Sets.Year[1]] = tmp["CRUDE_STEEL"][Timeslice,r]
     end
 
     for r ∈ Sets.Region_full for f ∈ Sets.Fuel for y ∈ Sets.Year[2:end]

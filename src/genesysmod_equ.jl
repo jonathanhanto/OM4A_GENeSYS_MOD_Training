@@ -1158,7 +1158,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
       Vars.PeakingDemand[y,r] ==
         sum(Vars.UseByTechnologyAnnual[y,t,"Power",r]/GWh_to_PJ*Params.x_peakingDemand[r,se]/8760
           #Demand per Year in PJ             to Gwh     Highest peak hour value   /number hours per year
-        for se ∈ 𝓢𝓮 for t ∈ setdiff(Maps.Fuel_Tech["Power"],Params.TagTechnologyToSubsets["StorageDummies"]) if Params.x_peakingDemand[r,se] != 0 && Params.TagTechnologyToSector[t,se] != 0)
+        for se ∈ setdiff(𝓢𝓮, ["Steel"]) for t ∈ setdiff(Maps.Fuel_Tech["Power"],Params.TagTechnologyToSubsets["StorageDummies"]) if Params.x_peakingDemand[r,se] != 0 && Params.TagTechnologyToSector[t,se] != 0)
       + Params.SpecifiedAnnualDemand[r,"Power",y]/GWh_to_PJ*Params.x_peakingDemand[r,"Power"]/8760,
       base_name="PC1_PowerPeakingDemand|$(y)|$(r)")
 
@@ -1166,7 +1166,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
       Vars.PeakingCapacity[y,r] ==
         sum((sum(Params.CapacityFactor[r,t,l,y] for l ∈ 𝓛 ) < length(𝓛) ? Vars.TotalCapacityAnnual[y,t,r]*Params.AvailabilityFactor[r,t,y]*RenewableCapacityFactorReduction*(sum(Params.CapacityFactor[r,t,l,y] for l ∈ 𝓛)/length(𝓛)) : 0)
         + (sum(Params.CapacityFactor[r,t,l,y] for l ∈ 𝓛 ) >= length(𝓛) ? Vars.TotalCapacityAnnual[y,t,r]*Params.AvailabilityFactor[r,t,y] : 0)
-        for t ∈ setdiff(𝓣,Params.TagTechnologyToSubsets["StorageDummies"]) if (!isempty(Maps.Tech_MO[t]) && sum(Params.OutputActivityRatio[r,t,"Power",m,y] for m ∈ Maps.Tech_MO[t]) != 0)),
+        for t ∈ setdiff(𝓣,Params.TagTechnologyToSubsets["StorageDummies"]) if (!isempty(Maps.Tech_MO[t]) && sum(Params.OutputActivityRatio[r,t,"Power",m,y] for m ∈ Maps.Tech_MO[t]) != 0 && Params.TagTechnologyToSector[t,"Steel"] == 0)),
         base_name="PC2_PowerPeakingCapacity|$(y)|$(r)")
 
       if y > Switch.set_peaking_startyear

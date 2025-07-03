@@ -42,7 +42,7 @@ function genesysmod_dataload(Switch)
     Sector = DataFrame(XLSX.gettable(in_data["Sets"],"H";first_row=1))[!,"Sector"]
     if Switch.switch_infeasibility_tech == 1
         append!(Technology, ["Infeasibility_Power", "Infeasibility_HLI", "Infeasibility_HMI",
-         "Infeasibility_HHI", "Infeasibility_HRI", "Infeasibility_Mob_Passenger", "Infeasibility_Mob_Freight"])
+         "Infeasibility_HHI", "Infeasibility_HRI", "Infeasibility_Mob_Passenger", "Infeasibility_Mob_Freight","Infeasibility_Steel"])
         push!(Sector,"Infeasibility")
     end
     
@@ -60,7 +60,7 @@ function genesysmod_dataload(Switch)
 
     if Switch.switch_infeasibility_tech == 1
         TagTechnologyToSubsets["DummyTechnology"] = ["Infeasibility_Power", "Infeasibility_HLI", "Infeasibility_HMI",
-        "Infeasibility_HHI", "Infeasibility_HRI", "Infeasibility_Mob_Passenger", "Infeasibility_Mob_Freight"]
+        "Infeasibility_HHI", "Infeasibility_HRI", "Infeasibility_Mob_Passenger", "Infeasibility_Mob_Freight","Infeasibility_Steel"]
     end
     
     # Step 2: Read parameters from regional file  -> now includes World values
@@ -375,6 +375,7 @@ function genesysmod_dataload(Switch)
         OutputActivityRatio[:,"Infeasibility_Power","Power",1,:] .= 1
         OutputActivityRatio[:,"Infeasibility_Mob_Passenger","Mobility_Passenger",1,:] .= 1 
         OutputActivityRatio[:,"Infeasibility_Mob_Freight","Mobility_Freight",1,:] .= 1 
+        OutputActivityRatio[:,"Infeasibility_Steel","Crude_Steel",1,:] .= 1 
 
         CapacityToActivityUnit[TagTechnologyToSubsets["DummyTechnology"]] .= 31.56
         TotalAnnualMaxCapacity[:,TagTechnologyToSubsets["DummyTechnology"],:] .= 999999
