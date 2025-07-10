@@ -201,6 +201,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps; 
     TagTimeIndependentFuel[:,"Hardcoal",:] .= 1
     TagTimeIndependentFuel[:,"Nuclear",:] .= 1
     TagTimeIndependentFuel[:,"Oil",:] .= 1
+    TagTimeIndependentFuel[:,"LPG",:] .= 1
     TagTimeIndependentFuel[:,"Air",:] .= 1
     TagTimeIndependentFuel[:,"DAC_Dummy",:] .= 1
     TagTimeIndependentFuel[:,"ETS",:] .= 1
@@ -213,6 +214,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps; 
     TagTimeIndependentFuel[:,"Hardcoal",:] .= 1
     TagTimeIndependentFuel[:,"Nuclear",:] .= 1
     TagTimeIndependentFuel[:,"Oil",:] .= 1
+    TagTimeIndependentFuel[:,"LPG",:] .= 1
     TagTimeIndependentFuel[:,"Air",:] .= 1
     TagTimeIndependentFuel[:,"DAC_Dummy",:] .= 1
     TagTimeIndependentFuel[:,"ETS",:] .= 1

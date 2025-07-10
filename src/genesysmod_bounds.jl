@@ -94,7 +94,8 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
             "Infeasibility_HRI" => "Heat_Low_Residential",
             "Infeasibility_Power" => "Power",
             "Infeasibility_Mob_Passenger" => "Mobility_Passenger",
-            "Infeasibility_Mob_Freight" => "Mobility_Freight")
+            "Infeasibility_Mob_Freight" => "Mobility_Freight",
+            "Infeasibility_Cooking" => "Cooking")
 
         for (k,v) ∈ output_activity_dict
             try

@@ -711,7 +711,7 @@ function timeseries_reduction!(Params, Sets, Switch)
         end
 
         tmp=Dict()
-        for t ∈ intersect(Country_Data_Entries, ["MOBILITY_PSNG", "HEAT_LOW", "HEAT_HIGH"])
+        for t ∈ intersect(Country_Data_Entries, ["MOBILITY_PSNG", "HEAT_LOW", "HEAT_HIGH","COOKING"])
             tmp[t] = ScaledCountryData[t] ./ combine(ScaledCountryData[t], names(ScaledCountryData[t]) .=> sum, renamecols=false)
         end
 
@@ -722,6 +722,7 @@ function timeseries_reduction!(Params, Sets, Switch)
             Params.SpecifiedDemandProfile[r,"Heat_Low_Industrial",:,Sets.Year[1]] = tmp["HEAT_HIGH"][Sets.Timeslice,r]
             Params.SpecifiedDemandProfile[r,"Heat_Medium_Industrial",:,Sets.Year[1]] = tmp["HEAT_HIGH"][Sets.Timeslice,r]
             Params.SpecifiedDemandProfile[r,"Heat_High_Industrial",:,Sets.Year[1]] = tmp["HEAT_HIGH"][Sets.Timeslice,r]
+            Params.SpecifiedDemandProfile[r,"Cooking",:,Sets.Year[1]] = tmp["COOKING"][Sets.Timeslice,r]
         end
 
         for r ∈ Sets.Region_full for f ∈ Sets.Fuel for y ∈ Sets.Year[2:end]

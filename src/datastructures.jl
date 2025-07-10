@@ -687,6 +687,7 @@ struct SubsetsIni <: InputClass
     Offshore ::Array
     SolarUtility ::Array
     Oil ::Array
+    LPG ::Array
     HeatLowRes ::Array
     HeatLowInd ::Array
     HeatMedInd ::Array

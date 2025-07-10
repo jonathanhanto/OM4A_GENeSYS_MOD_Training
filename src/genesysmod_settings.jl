@@ -44,13 +44,13 @@ function genesysmod_settings(Sets, Params, socialdiscountrate)
     ProductionGrowthLimit=JuMP.Containers.DenseAxisArray(zeros(length(Sets.Year), length(Sets.Fuel)), Sets.Year, Sets.Fuel)
     for y ∈ Sets.Year for f ∈ Sets.Fuel
         if f ∈ vcat(["Power"],Params.Tags.TagFuelToSubsets["HeatFuels"],Params.Tags.TagFuelToSubsets["TransportFuels"])
-            ProductionGrowthLimit[y,f] = Float64(0.25)
+            ProductionGrowthLimit[y,f] = Float64(0.3)
         end
         if f == "Air"
             ProductionGrowthLimit[y,f] = Float64(0.025)
         end
         if f == "Cooking"
-            ProductionGrowthLimit[y,f] = Float64(0.025)
+            ProductionGrowthLimit[y,f] = Float64(0.5)
         end
     end end
     StorageLimitOffset = Float64(0.015)
