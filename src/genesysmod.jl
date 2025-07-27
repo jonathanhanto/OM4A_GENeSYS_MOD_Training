@@ -31,7 +31,7 @@ function genesysmod(;elmod_daystep, elmod_hourstep, solver, DNLPsolver, year=201
     switch_infeasibility_tech = 0, switch_investLimit=1, switch_ccs=0,
     switch_ramping=0,switch_weighted_emissions=1,set_symmetric_transmission=0,switch_intertemporal=0,
     switch_base_year_bounds = 0,switch_peaking_capacity = 1, set_peaking_slack =1.0,
-    set_peaking_minrun_share =0.15, set_peaking_res_cf=0.5, set_peaking_min_thermal=0.5, set_peaking_startyear = 2025, 
+    set_peaking_minrun_share =0.15, set_peaking_res_cf=0.5, set_peaking_min_thermal=0.10, set_peaking_startyear = 2030, 
     switch_peaking_with_storages = 1, switch_peaking_with_trade = 1,switch_peaking_minrun = 0,
     switch_employment_calculation = 0, switch_endogenous_employment = 0,
     employment_data_file = "", elmod_nthhour = 0, elmod_starthour = 8, 
@@ -117,12 +117,12 @@ function genesysmod(;elmod_daystep, elmod_hourstep, solver, DNLPsolver, year=201
     #
 
     Sets, Params, Emp_Sets = genesysmod_dataload(Switch);
+
     Maps = make_mapping(Sets,Params)
     Vars=genesysmod_dec(model,Sets,Params,Switch,Maps)
     #
     # ####### Settings for model run (Years, Regions, etc) #############
     #
-
     Settings=genesysmod_settings(Sets, Params, Switch.socialdiscountrate)
 
     #end
@@ -144,6 +144,9 @@ function genesysmod(;elmod_daystep, elmod_hourstep, solver, DNLPsolver, year=201
     #
 
     genesysmod_equ(model,Sets,Params,Vars,Emp_Sets,Settings,Switch,Maps)
+    #
+    #######Including Employment ################
+ 
     #
     # ####### CPLEX Options #############
     #
@@ -189,7 +192,7 @@ function genesysmod(;elmod_daystep, elmod_hourstep, solver, DNLPsolver, year=201
     println("solver = $solver")
 
     optimize!(model)
-
+    genesysmod_employment(model,Sets, Params,Vars,Emp_Sets,Switch)
     elapsed = (Dates.now() - starttime)#24#3600;
 
     #

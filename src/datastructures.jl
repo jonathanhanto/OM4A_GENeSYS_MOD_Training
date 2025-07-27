@@ -283,6 +283,7 @@ struct Parameters <: InputClass
     TagTechnologyToModalType ::JuMP.Containers.DenseAxisArray
 
     EFactorConstruction ::Union{Nothing,JuMP.Containers.DenseAxisArray}
+    ConstructionTime ::Union{Nothing,JuMP.Containers.DenseAxisArray}
     EFactorOM ::Union{Nothing,JuMP.Containers.DenseAxisArray}
     EFactorManufacturing ::Union{Nothing,JuMP.Containers.DenseAxisArray}
     EFactorFuelSupply ::Union{Nothing,JuMP.Containers.DenseAxisArray}

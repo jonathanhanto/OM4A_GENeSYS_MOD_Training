@@ -28,13 +28,136 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
 
   ####Steel Inclusion ####
   ####Constraints the use of Scrap Steel to 40% of overall Crude Steel demand###
-  for y ∈ Sets.Year
-  @constraint(model,
-    sum(Vars.UseByTechnologyAnnual[y, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full) <= 0.40 * sum(Vars.ProductionByTechnologyAnnual[y, t, "Crude_Steel", r]
-    for t in ["IND_Steel_2_EAF", "IND_Steel_2_BF_BOF", "IND_Steel_2_BF_BOF_CCS"]
-    for r in Sets.Region_full),
-    base_name = "Limit_Scrap_Share")
+  #for y ∈ Sets.Year
+  #@constraint(model,
+  #  sum(Vars.UseByTechnologyAnnual[y, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full) <= 0.40 * sum(Vars.ProductionByTechnologyAnnual[y, t, "Crude_Steel", r]
+  #  for t in ["IND_Steel_2_EAF", "IND_Steel_2_BF_BOF", "IND_Steel_2_BF_BOF_CCS"]
+  #  for r in Sets.Region_full),
+  #  base_name = "Limit_Scrap_Share")
+  #end
+  #BF-BOF no new capacity in 2025
+
+  for r ∈ Sets.Region_full
+  @constraint(model, 
+  sum(Vars.NewCapacity[2025,"IND_Steel_2_BF_BOF",r]
+      for y in Sets.Year, r in Sets.Region_full) <= 0, 
+  base_name="JH_Steel_BF_BOF_nonewcapacity2025")
   end
+  ###BF-BOF off in High demand scenario
+  #if Switch.switch_steel_demand == "high"
+  #  @constraint(model, 
+  #  sum(Vars.NewCapacity[y,"IND_Steel_2_BF_BOF",r]
+  #      for y in Sets.Year, r in Sets.Region_full) <= 0, 
+  #  base_name="JH_Steel_BF_BOF_nonewcapacityever")
+  #end
+
+
+  ## DRI_H2_retrofit for Saldanha in SA-WC
+  for y ∈ Sets.Year
+  @constraint(model, 
+  sum(Vars.TotalCapacityAnnual[y,"IND_Steel_1_DRI_H2_Retro",r]
+      for y in Sets.Year, r in Sets.Region_full if r != "SA-WC") <= 0, 
+  base_name="JH_DRI_H2_Retro_Constraint")
+  end
+
+  for y ∈ Sets.Year
+    Params.TotalAnnualMaxCapacity["SA-WC","IND_Steel_1_DRI_H2_Retro",y] = 0.8
+  end
+
+  @constraint(model,
+  sum(Vars.TotalCapacityAnnual[2025,"IND_Steel_1_DRI_Gas_Retro","SA-WC"]) <= 0,
+  base_name="JH_Max_H_CHECK_Retro")
+
+  @constraint(model,
+  sum(Vars.TotalCapacityAnnual[2018,"IND_Steel_1_DRI_Gas_Retro","SA-WC"]) <= 0,
+  base_name="JH_Max_H_CHECK1_Retro")
+
+  ## DRI_CCS for Vanderbijlpark in SA-GA
+  for y ∈ Sets.Year
+  @constraint(model, 
+  sum(Vars.TotalCapacityAnnual[y,"IND_Steel_1_DRI_CCS",r]
+      for y in Sets.Year, r in Sets.Region_full if r != "SA-GA") <= 0, 
+  base_name="JH_DRI_H2_Retro_Constraint")
+  end
+
+  ## IND_Steel_1_DRI_Gas_Retro for Vanderbijlpark in SA-GA
+  for y ∈ Sets.Year
+  @constraint(model, 
+  sum(Vars.TotalCapacityAnnual[y,"IND_Steel_1_DRI_Gas_Retro",r]
+      for y in Sets.Year, r in Sets.Region_full if r != "SA-GA") <= 0, 
+  base_name="JH_DRI_H2_Retro_Constraint")
+  end
+
+
+  ## Gas or CCS retrofit in SA-GA (Vanderbijpark - Coal kilns)
+
+
+  ###End Steel Constrain Retrofitting
+
+### End Demand across all regions
+
+  if Switch.switch_steel_demand == "low"
+    @constraint(model,
+      sum(Vars.UseByTechnologyAnnual[2018, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full) <= 2.43664,
+      base_name = "Limit_Scrap_Share_2018")
+    @constraint(model,
+      sum(Vars.UseByTechnologyAnnual[2025, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full) <= 2.0024,
+      base_name = "Limit_Scrap_Share_2025")
+    @constraint(model,
+      sum(Vars.UseByTechnologyAnnual[2030, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full) <= 1.39,
+      base_name = "Limit_Scrap_Share_2030")
+    @constraint(model,
+      sum(Vars.UseByTechnologyAnnual[2035, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full) <= 1.39,
+      base_name = "Limit_Scrap_Share_2035")
+    @constraint(model,
+      sum(Vars.UseByTechnologyAnnual[2040, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full) <= 1.39,
+      base_name = "Limit_Scrap_Share_2040")
+    @constraint(model,
+      sum(Vars.UseByTechnologyAnnual[2045, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full) <= 1.39,
+      base_name = "Limit_Scrap_Share_2045")
+    @constraint(model,
+      sum(Vars.UseByTechnologyAnnual[2050, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full) <= 1.39,
+      base_name = "Limit_Scrap_Share_2050")
+  elseif Switch.switch_steel_demand == "high"
+      # High scenario – scrap share capped at 40% of total CS (SA-KW + SA-GA)
+      @constraint(model,
+        sum(Vars.UseByTechnologyAnnual[2018, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full)
+        <= 2.43664,  # unchanged baseline for 2018
+        base_name = "Limit_Scrap_Share_2018")
+
+      @constraint(model,
+        sum(Vars.UseByTechnologyAnnual[2025, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full)
+        <= 1.7556,   # 0.4 × (1.531 + 2.858)
+        base_name = "Limit_Scrap_Share_2025")
+
+      @constraint(model,
+        sum(Vars.UseByTechnologyAnnual[2030, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full)
+        <= 1.8845,   # 0.4 × (1.608 + 3.001)
+        base_name = "Limit_Scrap_Share_2030")
+
+      @constraint(model,
+        sum(Vars.UseByTechnologyAnnual[2035, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full)
+        <= 2.0134,   # 0.4 × (1.688 + 3.151)
+        base_name = "Limit_Scrap_Share_2035")
+
+      @constraint(model,
+        sum(Vars.UseByTechnologyAnnual[2040, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full)
+        <= 2.1422,   # 0.4 × (1.772 + 3.308)
+        base_name = "Limit_Scrap_Share_2040")
+
+      @constraint(model,
+        sum(Vars.UseByTechnologyAnnual[2045, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full)
+        <= 2.2711,   # 0.4 × (1.861 + 3.474)
+        base_name = "Limit_Scrap_Share_2045")
+
+      @constraint(model,
+        sum(Vars.UseByTechnologyAnnual[2050, "IND_Steel_2_EAF", "Scrap_Steel", r] for r in Sets.Region_full)
+        <= 2.4,   # 0.4 × (1.954 + 3.648)
+        base_name = "Limit_Scrap_Share_2050")
+  end
+
+
+  
   ## BF-BOF CCS constraint
   for y ∈ Sets.Year
   @constraint(model, 
@@ -374,16 +497,16 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
   end
 
 
-  for y ∈ Sets.Year for t ∈ Sets.Technology for r ∈ Sets.Region_full
-    if (t in Params.TagTechnologyToSubsets["SolarUtility"]) && (Params.TotalAnnualMaxCapacity[r,t,y] < 999999) && (Params.TotalAnnualMaxCapacity[r,t,y] > 0)
-      @constraint(model, sum(Vars.TotalCapacityAnnual[y, tt, r] for tt in Params.TagTechnologyToSubsets["SolarUtility"]) 
-      <= Params.TotalAnnualMaxCapacity[r,t,y], base_name="TCC1_SolarUtilityTotalAnnualMaxCapacityConstraint_$(y)_$(t)_$(r)")    
-    elseif (Params.TotalAnnualMaxCapacity[r,t,y] < 999999) && (Params.TotalAnnualMaxCapacity[r,t,y] > 0)
-      @constraint(model, Vars.TotalCapacityAnnual[y,t,r] <= Params.TotalAnnualMaxCapacity[r,t,y], base_name="TCC1_TotalAnnualMaxCapacityConstraint_$(y)_$(t)_$(r)")
-    elseif Params.TotalAnnualMaxCapacity[r,t,y] == 0
-      JuMP.fix(Vars.TotalCapacityAnnual[y,t,r],0; force=true)
-    end
-  end end end
+  #for y ∈ Sets.Year for t ∈ Sets.Technology for r ∈ Sets.Region_full
+  #  if (t in Params.TagTechnologyToSubsets["SolarUtility"]) && (Params.TotalAnnualMaxCapacity[r,t,y] < 999999) && (Params.TotalAnnualMaxCapacity[r,t,y] > 0)
+  #    @constraint(model, sum(Vars.TotalCapacityAnnual[y, tt, r] for tt in Params.TagTechnologyToSubsets["SolarUtility"]) 
+  #    <= Params.TotalAnnualMaxCapacity[r,t,y], base_name="TCC1_SolarUtilityTotalAnnualMaxCapacityConstraint_$(y)_$(t)_$(r)")    
+  #  elseif (Params.TotalAnnualMaxCapacity[r,t,y] < 999999) && (Params.TotalAnnualMaxCapacity[r,t,y] > 0)
+  #    @constraint(model, Vars.TotalCapacityAnnual[y,t,r] <= Params.TotalAnnualMaxCapacity[r,t,y], base_name="TCC1_TotalAnnualMaxCapacityConstraint_$(y)_$(t)_$(r)")
+  #  elseif Params.TotalAnnualMaxCapacity[r,t,y] == 0
+  #    JuMP.fix(Vars.TotalCapacityAnnual[y,t,r],0; force=true)
+  #  end
+  #end end end
 
   #Nuclear
   for y ∈ Sets.Year for r ∈ Sets.Region_full
@@ -400,20 +523,20 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
     Params.AnnualEmissionLimit["CO2", 2040] = 129    #40
     Params.AnnualEmissionLimit["CO2", 2045] = 62    #20
     Params.AnnualEmissionLimit["CO2", 2050] = 0     #### based on https://carbonbudgetcalculator.com/country.html?country=South%20Africa
-    Params.AnnualEmissionLimit["CO2_Steel", 2018] = Params.AnnualEmissionLimit["CO2", 2018] * 0.08  
-    Params.AnnualEmissionLimit["CO2_Steel", 2025] = Params.AnnualEmissionLimit["CO2", 2025] * 0.08   
-    Params.AnnualEmissionLimit["CO2_Steel", 2030] = Params.AnnualEmissionLimit["CO2", 2030] * 0.08  
-    Params.AnnualEmissionLimit["CO2_Steel", 2035] = Params.AnnualEmissionLimit["CO2", 2035] * 0.08   
-    Params.AnnualEmissionLimit["CO2_Steel", 2040] = Params.AnnualEmissionLimit["CO2", 2040] * 0.08   
-    Params.AnnualEmissionLimit["CO2_Steel", 2045] = Params.AnnualEmissionLimit["CO2", 2045] * 0.08   
-    Params.AnnualEmissionLimit["CO2_Steel", 2050] = Params.AnnualEmissionLimit["CO2", 2050] * 0.08 
-    Params.AnnualEmissionLimit["CO2", 2018] = Params.AnnualEmissionLimit["CO2", 2018] * 0.92 
-    Params.AnnualEmissionLimit["CO2", 2025] = Params.AnnualEmissionLimit["CO2", 2025] * 0.92 
-    Params.AnnualEmissionLimit["CO2", 2030] = Params.AnnualEmissionLimit["CO2", 2030] * 0.92  
-    Params.AnnualEmissionLimit["CO2", 2035] = Params.AnnualEmissionLimit["CO2", 2035] * 0.92   
-    Params.AnnualEmissionLimit["CO2", 2040] = Params.AnnualEmissionLimit["CO2", 2040] * 0.92    
-    Params.AnnualEmissionLimit["CO2", 2045] = Params.AnnualEmissionLimit["CO2", 2045] * 0.92    
-    Params.AnnualEmissionLimit["CO2", 2050] = Params.AnnualEmissionLimit["CO2", 2050] * 0.92
+    Params.AnnualEmissionLimit["CO2_Steel", 2018] = Params.AnnualEmissionLimit["CO2", 2018] * 0.04  
+    Params.AnnualEmissionLimit["CO2_Steel", 2025] = Params.AnnualEmissionLimit["CO2", 2025] * 0.04   
+    Params.AnnualEmissionLimit["CO2_Steel", 2030] = Params.AnnualEmissionLimit["CO2", 2030] * 0.04  
+    Params.AnnualEmissionLimit["CO2_Steel", 2035] = Params.AnnualEmissionLimit["CO2", 2035] * 0.04   
+    Params.AnnualEmissionLimit["CO2_Steel", 2040] = Params.AnnualEmissionLimit["CO2", 2040] * 0.04   
+    Params.AnnualEmissionLimit["CO2_Steel", 2045] = Params.AnnualEmissionLimit["CO2", 2045] * 0.04   
+    Params.AnnualEmissionLimit["CO2_Steel", 2050] = Params.AnnualEmissionLimit["CO2", 2050] * 0.04 
+    Params.AnnualEmissionLimit["CO2", 2018] = Params.AnnualEmissionLimit["CO2", 2018] * 0.96 
+    Params.AnnualEmissionLimit["CO2", 2025] = Params.AnnualEmissionLimit["CO2", 2025] * 0.96 
+    Params.AnnualEmissionLimit["CO2", 2030] = Params.AnnualEmissionLimit["CO2", 2030] * 0.96  
+    Params.AnnualEmissionLimit["CO2", 2035] = Params.AnnualEmissionLimit["CO2", 2035] * 0.96   
+    Params.AnnualEmissionLimit["CO2", 2040] = Params.AnnualEmissionLimit["CO2", 2040] * 0.96    
+    Params.AnnualEmissionLimit["CO2", 2045] = Params.AnnualEmissionLimit["CO2", 2045] * 0.96    
+    Params.AnnualEmissionLimit["CO2", 2050] = Params.AnnualEmissionLimit["CO2", 2050] * 0.96
   end
 
   #hydrogen demand

@@ -431,7 +431,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
 
     YearSplit = JuMP.Containers.DenseAxisArray(ones(length(Timeslice), length(Sets.Year)) * 1/length(Timeslice), Timeslice, Sets.Year)
 
-    sdp_list=["Power","Mobility_Passenger","Mobility_Freight","Heat_Buildings","Heat_Low_Industrial","Heat_Medium_Industrial","Heat_High_Industrial","Crude_Steel"]
+    sdp_list=["Power","Mobility_Passenger","Mobility_Freight","Heat_Buildings","Heat_Low_Industrial","Heat_Medium_Industrial","Heat_High_Industrial","Crude_Steel","Crude_Steel_Local"]
     capf_list=["HB_Heatpump_Aerial","HB_Heatpump_Ground","P_PV_Utility_Opt","P_Wind_Onshore_Opt","P_Wind_Offshore_Transitional","P_Wind_Onshore_Avg","P_Wind_Offshore_Shallow","P_PV_Utility_Inf",
     "P_Wind_Onshore_Inf","P_Wind_Offshore_Deep","RES_PV_Utility_HSAT","RES_PV_Utility_THSAT","RES_PV_Utility_VSAT","RES_PV_Utility_DAT","RES_BPV_Utility_90", "RES_BPV_Utility_Opt", "RES_BPV_Utility_HSAT", 
     "RES_BPV_Utility_THSAT", "RES_BPV_Utility_VSAT", "RES_BPV_Utility_DAT","P_Hydro_Small"]
@@ -481,6 +481,7 @@ function timeseries_reduction(Sets, TagTechnologyToSubsets, Switch, SpecifiedAnn
         SpecifiedDemandProfile[r,"Heat_Medium_Industrial",:,Sets.Year[1]] = tmp["HEAT_HIGH"][Timeslice,r]
         SpecifiedDemandProfile[r,"Heat_High_Industrial",:,Sets.Year[1]] = tmp["HEAT_HIGH"][Timeslice,r]
         SpecifiedDemandProfile[r,"Crude_Steel",:,Sets.Year[1]] = tmp["CRUDE_STEEL"][Timeslice,r]
+        SpecifiedDemandProfile[r,"Crude_Steel_Local",:,Sets.Year[1]] = tmp["CRUDE_STEEL"][Timeslice,r]
     end
 
     for r ∈ Sets.Region_full for f ∈ Sets.Fuel for y ∈ Sets.Year[2:end]

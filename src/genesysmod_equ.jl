@@ -815,7 +815,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
     base_name="RE2_AnnualREProductionLowerLimit|$(𝓨[i])|$(r)|$(f)")
 
     if Switch.switch_dispatch == 0
-      if 𝓨[i]> Switch.StartYear && Params.SpecifiedAnnualDemand[r,f,𝓨[i]]>0 && f != "H2" && f != "DR_Iron" && f != "DR_Iron_H2" && f != "Crude_Steel"
+      if 𝓨[i]> Switch.StartYear && Params.SpecifiedAnnualDemand[r,f,𝓨[i]]>0 && f != "H2" && f != "DR_Iron" && f != "DR_Iron_H2" && f != "Crude_Steel" && f != "Crude_Steel_Local"
         @constraint(model,
         Vars.TotalREProductionAnnual[𝓨[i],r,f] >= Vars.TotalREProductionAnnual[𝓨[i-1],r,f]*((Params.SpecifiedAnnualDemand[r,f,𝓨[i]]/Params.SpecifiedAnnualDemand[r,f,𝓨[i-1]])),
         base_name="RE3_RETargetPath|$(𝓨[i])|$(r)|$(f)")
@@ -1206,7 +1206,45 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
     end end
   end
   print("Cstr: Peaking : ",Dates.now()-start,"\n")
+  # ────────────────────────────────────────────────────
+  # Custom DRI retrofit/CCS constraints for y > 2030
+  # ────────────────────────────────────────────────────
+  for y in Sets.Year
+      if y > 2030
+          R = 1.883    # total DRI mass (Mt)
+          M = 1.5      # max retrofit or CCS (Mt)
+          # 1) Mass balance: old + retrofit + CCS == R
+          @constraint(model,
+              Vars.TotalCapacityAnnual[y, "IND_Steel_1_DRI",           "SA-GA"] +
+              Vars.TotalCapacityAnnual[y, "IND_Steel_1_DRI_Gas_Retro", "SA-GA"] +
+              Vars.TotalCapacityAnnual[y, "IND_Steel_1_DRI_CCS",       "SA-GA"]
+              == R,
+              base_name = "DRI_massbalance_$(y)"
+          )
 
+          # 2a) Retrofit cap ≤ M
+          @constraint(model,
+              Vars.TotalCapacityAnnual[y, "IND_Steel_1_DRI_Gas_Retro", "SA-GA"]
+              <= M,
+              base_name = "DRI_retro_max_$(y)"
+          )
+
+          # 2b) CCS cap ≤ M
+          @constraint(model,
+              Vars.TotalCapacityAnnual[y, "IND_Steel_1_DRI_CCS",       "SA-GA"]
+              <= M,
+              base_name = "DRI_ccs_max_$(y)"
+          )
+
+          # 3) (Optional) enforce retrofit+CCS ≤ M so you don't build both at full scale
+          @constraint(model,
+              Vars.TotalCapacityAnnual[y, "IND_Steel_1_DRI_Gas_Retro", "SA-GA"] +
+              Vars.TotalCapacityAnnual[y, "IND_Steel_1_DRI_CCS",       "SA-GA"]
+              <= M,
+              base_name = "DRI_retro_ccs_sum_max_$(y)"
+          )
+      end
+  end
 
   if Switch.switch_endogenous_employment == 1
 

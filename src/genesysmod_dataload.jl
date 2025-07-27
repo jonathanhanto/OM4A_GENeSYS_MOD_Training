@@ -107,84 +107,68 @@ function genesysmod_dataload(Switch)
     RegionalBaseYearProduction = create_daa(in_data, "Par_RegionalBaseYearProduction",dbr, 𝓡, 𝓣, 𝓕, 𝓨)
 
     SpecifiedAnnualDemand = create_daa(in_data, "Par_SpecifiedAnnualDemand",dbr, 𝓡, 𝓕, 𝓨)
-       if Switch.switch_steel_demand == "low"
+    if Switch.switch_steel_demand == "low"
+        # Low scenario
         SpecifiedAnnualDemand["SA-KW","Crude_Steel",2025] = 1.531
         SpecifiedAnnualDemand["SA-GA","Crude_Steel",2025] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2025] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2025] = 0
-        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 1.531
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2025] = 0.000
+
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 0.000
         SpecifiedAnnualDemand["SA-GA","Crude_Steel",2030] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2030] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 0
-        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 1.531
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 0.000
+
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 0.000
         SpecifiedAnnualDemand["SA-GA","Crude_Steel",2035] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2035] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2035] = 0
-        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 1.531
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2035] = 0.000
+
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 0.000
         SpecifiedAnnualDemand["SA-GA","Crude_Steel",2040] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2040] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2040] = 0
-        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 1.531
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2040] = 0.000
+
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 0.000
         SpecifiedAnnualDemand["SA-GA","Crude_Steel",2045] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2045] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2045] = 0
-        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 1.531
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2045] = 0.000
+
+        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 0.000
         SpecifiedAnnualDemand["SA-GA","Crude_Steel",2050] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2050] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2050] = 0
-    elseif Switch.switch_steel_demand == "medium"
-        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2025] = 1.531
-        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2025] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2025] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2025] = 0
-        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 1.531
-        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2030] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2030] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 0.5
-        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 1.531
-        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2035] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2035] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2035] = 1.2
-        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 1.531
-        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2040] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2040] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2040] = 1.9
-        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 1.531
-        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2045] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2045] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2045] = 2.6
-        SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 1.531
-        SpecifiedAnnualDemand["SA-GA","Crude_Steel",2050] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2050] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2050] = 3.3
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2050] = 0.000
+
     elseif Switch.switch_steel_demand == "high"
+        # High scenario
         SpecifiedAnnualDemand["SA-KW","Crude_Steel",2025] = 1.531
         SpecifiedAnnualDemand["SA-GA","Crude_Steel",2025] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2025] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2025] = 0
+        SpecifiedAnnualDemand["SA-WC","Crude_Steel_Local",2025] = 0.000
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2025] = 0.000
+
         SpecifiedAnnualDemand["SA-KW","Crude_Steel",2030] = 1.531
         SpecifiedAnnualDemand["SA-GA","Crude_Steel",2030] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2030] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 1
+        SpecifiedAnnualDemand["SA-WC","Crude_Steel_Local",2030] = 0.322
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 1.000
+
         SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 1.531
         SpecifiedAnnualDemand["SA-GA","Crude_Steel",2035] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2035] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2035] = 2.4
+        SpecifiedAnnualDemand["SA-WC","Crude_Steel_Local",2035] = 0.644
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2035] = 2.400
+
         SpecifiedAnnualDemand["SA-KW","Crude_Steel",2040] = 1.531
         SpecifiedAnnualDemand["SA-GA","Crude_Steel",2040] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2040] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2040] = 3.8
+        SpecifiedAnnualDemand["SA-WC","Crude_Steel_Local",2040] = 0.966
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2040] = 3.800
+
         SpecifiedAnnualDemand["SA-KW","Crude_Steel",2045] = 1.531
         SpecifiedAnnualDemand["SA-GA","Crude_Steel",2045] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2045] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2045] = 5.2
+        SpecifiedAnnualDemand["SA-WC","Crude_Steel_Local",2045] = 1.288
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2045] = 5.200
+
         SpecifiedAnnualDemand["SA-KW","Crude_Steel",2050] = 1.531
         SpecifiedAnnualDemand["SA-GA","Crude_Steel",2050] = 2.858
-        SpecifiedAnnualDemand["SA-MP","Crude_Steel",2050] = 0.616541
-        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2050] = 6.6
+        SpecifiedAnnualDemand["SA-WC","Crude_Steel_Local",2050] = 1.611
+        SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2050] = 6.600
+
     else
         error("Invalid Switch.switch_steel_demand value: $(Switch.switch_steel_demand)")
     end
+
 
     AnnualEmissionLimit = create_daa(in_data,"Par_AnnualEmissionLimit",dbr, 𝓔, 𝓨)
     AnnualExogenousEmission = create_daa(in_data,"Par_AnnualExogenousEmission",dbr, 𝓡, 𝓔, 𝓨)             
@@ -199,13 +183,11 @@ function genesysmod_dataload(Switch)
     TradeCosts = create_daa(in_data,"Par_TradeCosts",dbr, 𝓕, 𝓡, 𝓡)
 
     ResidualCapacity = create_daa(in_data, "Par_ResidualCapacity",dbr, 𝓡, 𝓣, 𝓨)
-
     TotalAnnualMaxCapacity = create_daa(in_data, "Par_TotalAnnualMaxCapacity",dbr, 𝓡, 𝓣, 𝓨)
     TotalAnnualMinCapacity = create_daa(in_data, "Par_TotalAnnualMinCapacity",dbr, 𝓡, 𝓣, 𝓨)
     TotalTechnologyAnnualActivityUpperLimit = create_daa(in_data, "Par_TotalAnnualMaxActivity",dbr, 𝓡, 𝓣, 𝓨)
     TotalTechnologyAnnualActivityLowerLimit = create_daa(in_data, "Par_TotalAnnualMinActivity",dbr, 𝓡, 𝓣, 𝓨)
     TotalTechnologyModelPeriodActivityUpperLimit = create_daa_init(in_data, "Par_ModelPeriodActivityMaxLimit",dbr, 999999, 𝓡, 𝓣)
-
     OperationalLife = create_daa(in_data, "Par_OperationalLife",dbr, 𝓣)
 
     RegionalCCSLimit = create_daa(in_data, "Par_RegionalCCSLimit",dbr, 𝓡)
@@ -303,41 +285,54 @@ function genesysmod_dataload(Switch)
 
     if Switch.switch_employment_calculation == 1
         ########## Dataload of Employment Excel ##########
-        employment_data = XLSX.readxlsx(joinpath(inputdir, Switch.employment_data_file * ".xlsx"))
+        employment_data = XLSX.readxlsx(
+            joinpath(inputdir, Switch.employment_data_file * ".xlsx")
+        )
 
-        Technology = DataFrame(XLSX.gettable(employment_data["Sets"],"A";first_row=1)...)[!,"Technology"]
-        Year = DataFrame(XLSX.gettable(employment_data["Sets"],"D";first_row=1)...)[!,"Year"]
-        Region = DataFrame(XLSX.gettable(employment_data["Sets"],"G";first_row=1)...)[!,"Region"]
+        # 1) pull out the raw “Sets” sheet
+        sheet = employment_data["Sets"]
+        # 2) read each column on its own, then drop blanks
+        df_tech   = DataFrame( XLSX.gettable(sheet, "A"; first_row=1) )
+        df_year   = DataFrame( XLSX.gettable(sheet, "B"; first_row=1) )
+        df_region = DataFrame( XLSX.gettable(sheet, "C"; first_row=1) )
 
-        Emp_Sets=GENeSYS_MOD.Emp_Sets(Technology,Year,Region)
+        Technology = collect( skipmissing(df_tech[!,:Technology]) )
+        Year       = collect( skipmissing(df_year[!,:Year]) )
+        Region     = collect( skipmissing(df_region[!,:Region]) )
+        # 3) build the Emp_Sets with clean, unique index vectors
+        Emp_Sets = GENeSYS_MOD.Emp_Sets(Technology, Year, Region)
 
-
-        EFactorConstruction = create_daa(employment_data, "Par_EFactorConstruction",dbr, Emp_Sets.Technology, Emp_Sets.Year)
-        EFactorOM = create_daa(employment_data, "Par_EFactorOM",dbr, Emp_Sets.Technology, Emp_Sets.Year)
-        EFactorManufacturing = create_daa(employment_data, "Par_EFactorManufacturing",dbr, Emp_Sets.Technology, Emp_Sets.Year)
-        EFactorFuelSupply = create_daa(employment_data, "Par_EFactorFuelSupply",dbr, Emp_Sets.Technology, Emp_Sets.Year)
-        EFactorCoalJobs = create_daa(employment_data, "Par_EFactorCoalJobs",dbr, Emp_Sets.Technology, Emp_Sets.Year)
-        CoalSupply = create_daa(employment_data, "Par_CoalSupply",dbr, 𝓡, Emp_Sets.Year)
-        CoalDigging = create_daa(employment_data, "Par_CoalDigging",dbr, Switch.model_region,
-            Emp_Sets.Technology, "$(Switch.emissionPathway)_$(Switch.emissionScenario)", 𝓨)
-        RegionalAdjustmentFactor = create_daa(employment_data, "PAR_RegionalAdjustmentFactor",dbr, Switch.model_region, Emp_Sets.Year)
-        LocalManufacturingFactor = create_daa(employment_data, "PAR_LocalManufacturingFactor",dbr, Switch.model_region, Emp_Sets.Year)
-        DeclineRate = create_daa(employment_data, "PAR_DeclineRate",dbr, Emp_Sets.Technology, Emp_Sets.Year)
-
+        # 4) load all of the parameter tables against those index sets
+        EFactorConstruction      = create_daa(employment_data, "Par_EFactorConstruction",dbr,Emp_Sets.Technology, Emp_Sets.Year)
+        ConstructionTime         = create_daa(employment_data, "Par_ConstructionTime",dbr,Emp_Sets.Technology, Emp_Sets.Year)  
+        EFactorOM                = create_daa(employment_data, "Par_EFactorOM",dbr,Emp_Sets.Technology, Emp_Sets.Year)
+        EFactorManufacturing     = create_daa(employment_data, "Par_EFactorManufacturing",dbr,Emp_Sets.Technology, Emp_Sets.Year)
+        EFactorFuelSupply        = create_daa(employment_data, "Par_EFactorFuelSupply_old",dbr,Emp_Sets.Technology, Emp_Sets.Year)
+        EFactorCoalJobs          = create_daa(employment_data, "Par_EFactorCoalJobs",dbr,Emp_Sets.Technology, Emp_Sets.Year)
+        CoalSupply               = create_daa(employment_data, "Par_CoalSupply",dbr,Sets.Region_full, Emp_Sets.Year)
+        CoalDigging              = create_daa(employment_data, "Par_CoalDigging",dbr,Switch.model_region,Emp_Sets.Technology,Emp_Sets.Year)
+        RegionalAdjustmentFactor = create_daa(employment_data, "PAR_RegionalAdjustmentFactor",dbr,Emp_Sets.Year)
+        LocalManufacturingFactor = create_daa(employment_data, "PAR_LocalManufacturingFactor",dbr,Emp_Sets.Technology,Emp_Sets.Year)
+        #show(LocalManufacturingFactor)
+        DeclineRate              = create_daa(employment_data, "PAR_DeclineRate",dbr,Emp_Sets.Technology,Emp_Sets.Year)
     else
-        EFactorConstruction = nothing
-        EFactorOM = nothing
-        EFactorManufacturing = nothing
-        EFactorFuelSupply = nothing
-        EFactorCoalJobs = nothing
-        CoalSupply = nothing
-        CoalDigging = nothing
+        # disable all
+        EFactorConstruction      = nothing
+        ConstructionTime         = nothing
+        EFactorOM                = nothing
+        EFactorManufacturing     = nothing
+        EFactorFuelSupply        = nothing
+        EFactorCoalJobs          = nothing
+        CoalSupply               = nothing
+        CoalDigging              = nothing
         RegionalAdjustmentFactor = nothing
         LocalManufacturingFactor = nothing
-        DeclineRate = nothing
+        DeclineRate              = nothing
 
-        Emp_Sets=GENeSYS_MOD.Emp_Sets(nothing,nothing,nothing)
+        Emp_Sets = GENeSYS_MOD.Emp_Sets(nothing, nothing, nothing)
+        
     end
+    #error("Stopping here")
 
     #
     # ####### Load from hourly Data #############
@@ -408,7 +403,7 @@ function genesysmod_dataload(Switch)
     TradeLossFactor,TradeRouteInstalledCapacity,TradeLossBetweenRegions,CommissionedTradeCapacity,
     TradeCapacity,TradeCapacityGrowthCosts,GrowthRateTradeCapacity,SelfSufficiency,
     RampingUpFactor,RampingDownFactor,ProductionChangeCost,MinActiveProductionPerTimeslice,
-    ModalSplitByFuelAndModalType,TagTechnologyToModalType,EFactorConstruction, EFactorOM,
+    ModalSplitByFuelAndModalType,TagTechnologyToModalType,EFactorConstruction,ConstructionTime, EFactorOM,
     EFactorManufacturing, EFactorFuelSupply, EFactorCoalJobs,CoalSupply, CoalDigging,
     RegionalAdjustmentFactor, LocalManufacturingFactor, DeclineRate,x_peakingDemand,
     TagDemandFuelToSector,TagElectricTechnology, TagTechnologyToSubsets, TagFuelToSubsets,
