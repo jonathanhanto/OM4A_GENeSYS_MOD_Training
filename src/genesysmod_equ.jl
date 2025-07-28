@@ -240,22 +240,96 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
   ###############
 
   
-  ############### Capacity Adequacy A #############
-  
-  start=Dates.now()
-  for y ∈ 𝓨 for t ∈ 𝓣 for  r ∈ 𝓡
-    cond= (any(x->x>0,[Params.TotalAnnualMaxCapacity[r,t,yy] for yy ∈ 𝓨 if (y - yy < Params.OperationalLife[t]) && (y-yy>= 0)])) && (Params.TotalTechnologyModelPeriodActivityUpperLimit[r,t] > 0)
+  ############### Capacity Adequacy A ###############
+
+  start = Dates.now()
+
+  # (A1 & A2) across all y,t,r
+  for y in 𝓨, t in 𝓣, r in 𝓡
+
+    # A1: accumulated new capacity or fix to zero
+    cond = any(yy -> (y-yy) ≥ 0 && (y-yy) < Params.OperationalLife[t],
+               𝓨) &&
+           (Params.TotalTechnologyModelPeriodActivityUpperLimit[r,t] > 0)
+
     if cond
-      @constraint(model, Vars.AccumulatedNewCapacity[y,t,r] == sum(Vars.NewCapacity[yy,t,r] for yy ∈ 𝓨 if (y - yy < Params.OperationalLife[t]) && (y-yy>= 0)), base_name="CA1_TotalNewCapacity|$(y)|$(t)|$(r)")
+      @constraint(model,
+        Vars.AccumulatedNewCapacity[y,t,r]
+          == sum(Vars.NewCapacity[yy,t,r]
+                 for yy in 𝓨 if (y-yy) ≥ 0 && (y-yy) < Params.OperationalLife[t]),
+        base_name = "CA1_TotalNewCapacity|$(y)|$(t)|$(r)"
+      )
     else
-      JuMP.fix(Vars.AccumulatedNewCapacity[y,t,r], 0; force=true)
+      JuMP.fix(Vars.AccumulatedNewCapacity[y,t,r], 0.0; force=true)
     end
-    if cond || (Params.ResidualCapacity[r,t,y]) > 0
-      @constraint(model, Vars.AccumulatedNewCapacity[y,t,r] + Params.ResidualCapacity[r,t,y] == Vars.TotalCapacityAnnual[y,t,r], base_name="CA2_TotalAnnualCapacity|$(y)|$(t)|$(r)")
-    elseif !cond && (Params.ResidualCapacity[r,t,y]) == 0
-      JuMP.fix(Vars.TotalCapacityAnnual[y,t,r],0; force=true)
+
+    # A2: total capacity = accumulated new + residual
+    # **override** for DRI base‐tech in SA‑GA after 2030
+    if r == "SA-GA" &&
+       t == "IND_Steel_1_DRI" &&
+       y  > 2030
+
+      @constraint(model,
+        Vars.AccumulatedNewCapacity[y,t,r] +
+        Params.ResidualCapacity[r,t,y] -
+        Vars.TotalCapacityAnnual[y,"IND_Steel_1_DRI_Gas_Retro",r] -
+        Vars.TotalCapacityAnnual[y,"IND_Steel_1_DRI_CCS",      r]
+        == Vars.TotalCapacityAnnual[y,t,r],
+        base_name = "CA2_DRI_residual_adj|$(y)|$(r)"
+      )
+
+    elseif cond || Params.ResidualCapacity[r,t,y] > 0
+
+      @constraint(model,
+        Vars.AccumulatedNewCapacity[y,t,r] +
+        Params.ResidualCapacity[r,t,y]
+        == Vars.TotalCapacityAnnual[y,t,r],
+        base_name = "CA2_TotalAnnualCapacity|$(y)|$(t)|$(r)"
+      )
+
+    else
+      JuMP.fix(Vars.TotalCapacityAnnual[y,t,r], 0.0; force=true)
     end
-  end end end
+  end
+
+  print("Cstr: Cap Adequacy A1 : ", Dates.now() - start, "\n")
+
+
+  # ────────────────────────────────────────────────────
+  # Custom DRI retrofit/CCS constraints for “SA‑GA”, years > 2030
+  # ────────────────────────────────────────────────────
+  R = 1.883    # total DRI mass (Mt)
+  M = 1.5      # max retrofit or CCS (Mt)
+
+  for y in 𝓨
+    if y > 2030
+      # mass balance
+      @constraint(model,
+        Vars.TotalCapacityAnnual[y,"IND_Steel_1_DRI",          "SA-GA"] +
+        Vars.TotalCapacityAnnual[y,"IND_Steel_1_DRI_Gas_Retro","SA-GA"] +
+        Vars.TotalCapacityAnnual[y,"IND_Steel_1_DRI_CCS",      "SA-GA"]
+        == R,
+        base_name = "DRI_massbalance_$(y)"
+      )
+
+      # caps
+      @constraint(model,
+        Vars.TotalCapacityAnnual[y,"IND_Steel_1_DRI_Gas_Retro","SA-GA"] <= M,
+        base_name = "DRI_retro_max_$(y)"
+      )
+      @constraint(model,
+        Vars.TotalCapacityAnnual[y,"IND_Steel_1_DRI_CCS",      "SA-GA"] <= M,
+        base_name = "DRI_ccs_max_$(y)"
+      )
+      @constraint(model,
+        Vars.TotalCapacityAnnual[y,"IND_Steel_1_DRI_Gas_Retro","SA-GA"] +
+        Vars.TotalCapacityAnnual[y,"IND_Steel_1_DRI_CCS",      "SA-GA"]
+        <= M,
+        base_name = "DRI_retro_ccs_sum_max_$(y)"
+      )
+    end
+  end
+  # ────────────────────────────────────────────────────
 
   print("Cstr: Cap Adequacy A1 : ",Dates.now()-start,"\n")
 
@@ -270,6 +344,8 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
       CanBuildTechnology[y,t,r] = 1
     end
   end end end
+
+
 
   start=Dates.now()
   for y ∈ 𝓨 for t ∈ 𝓣 for r ∈ 𝓡 for l ∈ 𝓛 for m ∈ Maps.Tech_MO[t]
@@ -1206,45 +1282,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps)
     end end
   end
   print("Cstr: Peaking : ",Dates.now()-start,"\n")
-  # ────────────────────────────────────────────────────
-  # Custom DRI retrofit/CCS constraints for y > 2030
-  # ────────────────────────────────────────────────────
-  for y in Sets.Year
-      if y > 2030
-          R = 1.883    # total DRI mass (Mt)
-          M = 1.5      # max retrofit or CCS (Mt)
-          # 1) Mass balance: old + retrofit + CCS == R
-          @constraint(model,
-              Vars.TotalCapacityAnnual[y, "IND_Steel_1_DRI",           "SA-GA"] +
-              Vars.TotalCapacityAnnual[y, "IND_Steel_1_DRI_Gas_Retro", "SA-GA"] +
-              Vars.TotalCapacityAnnual[y, "IND_Steel_1_DRI_CCS",       "SA-GA"]
-              == R,
-              base_name = "DRI_massbalance_$(y)"
-          )
 
-          # 2a) Retrofit cap ≤ M
-          @constraint(model,
-              Vars.TotalCapacityAnnual[y, "IND_Steel_1_DRI_Gas_Retro", "SA-GA"]
-              <= M,
-              base_name = "DRI_retro_max_$(y)"
-          )
-
-          # 2b) CCS cap ≤ M
-          @constraint(model,
-              Vars.TotalCapacityAnnual[y, "IND_Steel_1_DRI_CCS",       "SA-GA"]
-              <= M,
-              base_name = "DRI_ccs_max_$(y)"
-          )
-
-          # 3) (Optional) enforce retrofit+CCS ≤ M so you don't build both at full scale
-          @constraint(model,
-              Vars.TotalCapacityAnnual[y, "IND_Steel_1_DRI_Gas_Retro", "SA-GA"] +
-              Vars.TotalCapacityAnnual[y, "IND_Steel_1_DRI_CCS",       "SA-GA"]
-              <= M,
-              base_name = "DRI_retro_ccs_sum_max_$(y)"
-          )
-      end
-  end
 
   if Switch.switch_endogenous_employment == 1
 

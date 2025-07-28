@@ -63,7 +63,7 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
   for y ∈ Sets.Year
     Params.TotalAnnualMaxCapacity["SA-WC","IND_Steel_1_DRI_H2_Retro",y] = 0.8
   end
-
+  
   @constraint(model,
   sum(Vars.TotalCapacityAnnual[2025,"IND_Steel_1_DRI_Gas_Retro","SA-WC"]) <= 0,
   base_name="JH_Max_H_CHECK_Retro")
