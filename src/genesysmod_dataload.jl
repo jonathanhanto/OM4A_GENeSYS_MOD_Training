@@ -144,6 +144,7 @@ function genesysmod_dataload(Switch)
         SpecifiedAnnualDemand["SA-GA","Crude_Steel",2030] = 2.858
         SpecifiedAnnualDemand["SA-WC","Crude_Steel_Local",2030] = 0.322
         SpecifiedAnnualDemand["SA-WC","DR_Iron_H2",2030] = 1.000
+        
 
         SpecifiedAnnualDemand["SA-KW","Crude_Steel",2035] = 1.531
         SpecifiedAnnualDemand["SA-GA","Crude_Steel",2035] = 2.858
@@ -168,8 +169,6 @@ function genesysmod_dataload(Switch)
     else
         error("Invalid Switch.switch_steel_demand value: $(Switch.switch_steel_demand)")
     end
-
-
     AnnualEmissionLimit = create_daa(in_data,"Par_AnnualEmissionLimit",dbr, 𝓔, 𝓨)
     AnnualExogenousEmission = create_daa(in_data,"Par_AnnualExogenousEmission",dbr, 𝓡, 𝓔, 𝓨)             
     AnnualSectoralEmissionLimit = create_daa(in_data, "Par_AnnualSectoralEmissionLimit",dbr, 𝓔, 𝓢𝓮, 𝓨)
@@ -183,8 +182,32 @@ function genesysmod_dataload(Switch)
     TradeCosts = create_daa(in_data,"Par_TradeCosts",dbr, 𝓕, 𝓡, 𝓡)
 
     ResidualCapacity = create_daa(in_data, "Par_ResidualCapacity",dbr, 𝓡, 𝓣, 𝓨)
+    if Switch.switch_steel_demand == "low"
+        # Low scenario
+        ResidualCapacity["SA-KW","IND_Steel_2_BF_BOF",2030] = 0
+        ResidualCapacity["SA-KW","IND_Steel_2_BF_BOF",2035] = 0
+        ResidualCapacity["SA-KW","IND_Steel_2_BF_BOF",2040] = 0
+        ResidualCapacity["SA-KW","IND_Steel_2_BF_BOF",2045] = 0
+        ResidualCapacity["SA-KW","IND_Steel_2_BF_BOF",2050] = 0
+    elseif Switch.switch_steel_demand == "high"
+        ResidualCapacity["SA-KW","IND_Steel_2_BF_BOF",2040] = 0
+        ResidualCapacity["SA-KW","IND_Steel_2_BF_BOF",2045] = 0
+        ResidualCapacity["SA-KW","IND_Steel_2_BF_BOF",2050] = 0
+    else
+        error("Invalid Switch.switch_steel_demand value: $(Switch.switch_steel_demand)")
+    end
     TotalAnnualMaxCapacity = create_daa(in_data, "Par_TotalAnnualMaxCapacity",dbr, 𝓡, 𝓣, 𝓨)
     TotalAnnualMinCapacity = create_daa(in_data, "Par_TotalAnnualMinCapacity",dbr, 𝓡, 𝓣, 𝓨)
+    if Switch.switch_steel_demand == "low"
+        # Low scenario
+        TotalAnnualMinCapacity["SA-GA","IND_Steel_2_EAF",2030] = 0
+        TotalAnnualMinCapacity["SA-KW","IND_Steel_2_EAF",2035] = 0
+    elseif Switch.switch_steel_demand == "high"
+        TotalAnnualMinCapacity["SA-GA","IND_Steel_2_EAF",2030] = 1.7
+        TotalAnnualMinCapacity["SA-KW","IND_Steel_2_EAF",2035] = 1.9
+    else
+        error("Invalid Switch.switch_steel_demand value: $(Switch.switch_steel_demand)")
+    end
     TotalTechnologyAnnualActivityUpperLimit = create_daa(in_data, "Par_TotalAnnualMaxActivity",dbr, 𝓡, 𝓣, 𝓨)
     TotalTechnologyAnnualActivityLowerLimit = create_daa(in_data, "Par_TotalAnnualMinActivity",dbr, 𝓡, 𝓣, 𝓨)
     TotalTechnologyModelPeriodActivityUpperLimit = create_daa_init(in_data, "Par_ModelPeriodActivityMaxLimit",dbr, 999999, 𝓡, 𝓣)

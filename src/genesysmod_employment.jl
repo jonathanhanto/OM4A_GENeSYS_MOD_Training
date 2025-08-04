@@ -110,15 +110,16 @@ function genesysmod_employment(model, Sets, Params, Vars, Emp_Sets, Switch)
               * 2.15
               * (1 - Params.DeclineRate[t,y])^YearlyDifferenceMultiplier(y, Emp_Sets)
             )
-            
+
             # Fuel-supply jobs (note: uses the model’s Sets.Fuel)
-            output_energyjobs[r,t,"SupplyJobs",scenario,y] = sum(
-                Vars.UseByTechnologyAnnual[y,t,f,r] for f in Sets.Fuel, m in Sets.Mode_of_operation, l in Sets.Timeslice
+            output_energyjobs[r,t,"SupplyJobs",scenario,y] = (sum(
+                Vars.UseByTechnologyAnnual[y,t,f,r] for f in Sets.Fuel)
               * Params.EFactorFuelSupply[t,y]
               * 2.15
               * (1 - Params.DeclineRate[t,y])^YearlyDifferenceMultiplier(y, Emp_Sets)
               #for _se in Sets.Sector
             )
+
         end
         # 2c) special Coal_Heat supply job formula
         # c) Coal-Heat special — replace this entire for-loop:
