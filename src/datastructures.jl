@@ -500,6 +500,7 @@ struct Emp_Sets <: InputClass
     Technology ::Union{Nothing,Array}
     Year ::Union{Nothing,Array}
     Region ::Union{Nothing,Array}
+    Fuel ::Union{Nothing,Array}
 end
 
 """

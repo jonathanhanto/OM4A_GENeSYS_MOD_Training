@@ -60,22 +60,40 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
       end
   end
 
-  for y ∈ Sets.Year, t ∈ Sets.Technology, r ∈ Sets.Region_full
-    if t in ["IND_Steel_1_DRI", "IND_Steel_1_DRI_Gas", "IND_Steel_2_BF_BOF"]
-      min_use = 0.3  # 30% minimum utilization
-      activity_unit = Params.CapacityToActivityUnit[t]
+  if Switch.switch_steel_demand == "low"
+      # Low scenario
+      Params.TotalAnnualMinCapacity["SA-GA","IND_Steel_2_EAF",2030] = 0
+      Params.TotalAnnualMinCapacity["SA-KW","IND_Steel_2_EAF",2035] = 0
+  elseif Switch.switch_steel_demand == "high"
+    @constraint(model,
+        Vars.NewCapacity[2030, "IND_Steel_1_DRI_H2", "SA-GA"] >= 1.7,
+        base_name = "NewCapPlanned_in_SA-GA"
+    )
+    @constraint(model, 
+        Vars.NewCapacity[2035, "IND_Steel_1_DRI_H2", "SA-KW"] >= 1.9,
+        base_name = "NewCapPlanned_in_SA-KW"
+    )    
+  else
+      error("Invalid Switch.switch_steel_demand value: $(Switch.switch_steel_demand)")
+  end
+  #------------------------------ MinRun (simple, summed) -----------------------#
+  min_use = 0.5   # required fraction of nameplate used per enforced year
+  W       = 16    # enforcement window in years
 
-      # Capacity installed in the last 15 years (including this year)
-      capacity_last_15_years = sum(
-        Vars.NewCapacity[y_p, t, r] for y_p in Sets.Year if y_p ≤ y && y - y_p < 15
+  for t ∈ ["IND_Steel_1_DRI", "IND_Steel_1_DRI_Gas", "IND_Steel_2_BF_BOF"],
+      r ∈ Sets.Region_full, y ∈ Sets.Year
+
+      enforced_cap = sum(
+          Vars.NewCapacity[y0, t, r]
+          for y0 ∈ Sets.Year
+          if 0 ≤ (y - y0) < W   # cohorts commissioned within last W years
       )
 
       @constraint(model,
-        Vars.TotalTechnologyAnnualActivity[y, t, r] ≥
-        capacity_last_15_years * min_use * activity_unit,
-        base_name = "MIN_USE_15Y|$(y)|$(t)|$(r)"
+          Vars.TotalTechnologyAnnualActivity[y, t, r] ≥
+              enforced_cap * min_use * Params.CapacityToActivityUnit[t],
+          base_name = "MIN_USE_SUM|$(y)|$(t)|$(r)"
       )
-    end
   end
   ###BF-BOF off in High demand scenario
   #if Switch.switch_steel_demand == "high"

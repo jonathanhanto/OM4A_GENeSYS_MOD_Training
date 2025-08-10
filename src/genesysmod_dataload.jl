@@ -184,7 +184,7 @@ function genesysmod_dataload(Switch)
     ResidualCapacity = create_daa(in_data, "Par_ResidualCapacity",dbr, 𝓡, 𝓣, 𝓨)
     if Switch.switch_steel_demand == "low"
         # Low scenario
-        ResidualCapacity["SA-KW","IND_Steel_2_BF_BOF",2030] = 0
+        #ResidualCapacity["SA-KW","IND_Steel_2_BF_BOF",2030] = 0
         ResidualCapacity["SA-KW","IND_Steel_2_BF_BOF",2035] = 0
         ResidualCapacity["SA-KW","IND_Steel_2_BF_BOF",2040] = 0
         ResidualCapacity["SA-KW","IND_Steel_2_BF_BOF",2045] = 0
@@ -198,16 +198,6 @@ function genesysmod_dataload(Switch)
     end
     TotalAnnualMaxCapacity = create_daa(in_data, "Par_TotalAnnualMaxCapacity",dbr, 𝓡, 𝓣, 𝓨)
     TotalAnnualMinCapacity = create_daa(in_data, "Par_TotalAnnualMinCapacity",dbr, 𝓡, 𝓣, 𝓨)
-    if Switch.switch_steel_demand == "low"
-        # Low scenario
-        TotalAnnualMinCapacity["SA-GA","IND_Steel_2_EAF",2030] = 0
-        TotalAnnualMinCapacity["SA-KW","IND_Steel_2_EAF",2035] = 0
-    elseif Switch.switch_steel_demand == "high"
-        TotalAnnualMinCapacity["SA-GA","IND_Steel_2_EAF",2030] = 1.7
-        TotalAnnualMinCapacity["SA-KW","IND_Steel_2_EAF",2035] = 1.9
-    else
-        error("Invalid Switch.switch_steel_demand value: $(Switch.switch_steel_demand)")
-    end
     TotalTechnologyAnnualActivityUpperLimit = create_daa(in_data, "Par_TotalAnnualMaxActivity",dbr, 𝓡, 𝓣, 𝓨)
     TotalTechnologyAnnualActivityLowerLimit = create_daa(in_data, "Par_TotalAnnualMinActivity",dbr, 𝓡, 𝓣, 𝓨)
     TotalTechnologyModelPeriodActivityUpperLimit = create_daa_init(in_data, "Par_ModelPeriodActivityMaxLimit",dbr, 999999, 𝓡, 𝓣)
@@ -318,19 +308,21 @@ function genesysmod_dataload(Switch)
         df_tech   = DataFrame( XLSX.gettable(sheet, "A"; first_row=1) )
         df_year   = DataFrame( XLSX.gettable(sheet, "B"; first_row=1) )
         df_region = DataFrame( XLSX.gettable(sheet, "C"; first_row=1) )
+        df_fuel = DataFrame( XLSX.gettable(sheet, "D"; first_row=1) )
 
         Technology = collect( skipmissing(df_tech[!,:Technology]) )
         Year       = collect( skipmissing(df_year[!,:Year]) )
         Region     = collect( skipmissing(df_region[!,:Region]) )
+        Fuel     = collect( skipmissing(df_fuel[!,:Fuel]) )
         # 3) build the Emp_Sets with clean, unique index vectors
-        Emp_Sets = GENeSYS_MOD.Emp_Sets(Technology, Year, Region)
+        Emp_Sets = GENeSYS_MOD.Emp_Sets(Technology, Year, Region, Fuel)
 
         # 4) load all of the parameter tables against those index sets
         EFactorConstruction      = create_daa(employment_data, "Par_EFactorConstruction",dbr,Emp_Sets.Technology, Emp_Sets.Year)
         ConstructionTime         = create_daa(employment_data, "Par_ConstructionTime",dbr,Emp_Sets.Technology, Emp_Sets.Year)  
         EFactorOM                = create_daa(employment_data, "Par_EFactorOM",dbr,Emp_Sets.Technology, Emp_Sets.Year)
         EFactorManufacturing     = create_daa(employment_data, "Par_EFactorManufacturing",dbr,Emp_Sets.Technology, Emp_Sets.Year)
-        EFactorFuelSupply        = create_daa(employment_data, "Par_EFactorFuelSupply_old",dbr,Emp_Sets.Technology, Emp_Sets.Year)
+        EFactorFuelSupply        = create_daa(employment_data, "Par_EFactorFuelSupply",dbr,Emp_Sets.Fuel, Emp_Sets.Year)
         EFactorCoalJobs          = create_daa(employment_data, "Par_EFactorCoalJobs",dbr,Emp_Sets.Technology, Emp_Sets.Year)
         CoalSupply               = create_daa(employment_data, "Par_CoalSupply",dbr,Sets.Region_full, Emp_Sets.Year)
         CoalDigging              = create_daa(employment_data, "Par_CoalDigging",dbr,Switch.model_region,Emp_Sets.Technology,Emp_Sets.Year)
@@ -352,8 +344,7 @@ function genesysmod_dataload(Switch)
         LocalManufacturingFactor = nothing
         DeclineRate              = nothing
 
-        Emp_Sets = GENeSYS_MOD.Emp_Sets(nothing, nothing, nothing)
-        
+        Emp_Sets = GENeSYS_MOD.Emp_Sets(nothing, nothing, nothing, nothing)
     end
     #error("Stopping here")
 
