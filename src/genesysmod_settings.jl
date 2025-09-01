@@ -61,7 +61,7 @@ function genesysmod_settings(Sets, Params, socialdiscountrate)
     BaseYearSlack = JuMP.Containers.DenseAxisArray(zeros(length(Sets.Fuel)), Sets.Fuel)
     BaseYearSlack[Sets.Fuel] .= 0.035
     BaseYearSlack["Power"] = 0.035
-    BaseYearSlack["Cooking"] = 0.005
+    #BaseYearSlack["Cooking"] = 0.005
     BaseYearSlack["LPG"] = 0
 
 
