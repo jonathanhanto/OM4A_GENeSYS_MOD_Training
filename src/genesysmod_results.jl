@@ -556,7 +556,6 @@ function genesysmod_results(model,Sets, Params, VarPar, Vars, Switch, Settings, 
     "H2",
     "Gas_Natural",
     "Oil",
-    "LPG",
     "Nuclear"]
 
     notEU27 = [
