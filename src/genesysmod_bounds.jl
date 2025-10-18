@@ -132,11 +132,11 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
             end
     end end
 
-    for r ∈ Sets.Region_full
-        for t ∈ Params.Tags.TagTechnologyToSubsets["ImportTechnology"]
-            for y ∈ Sets.Year
-                Params.AvailabilityFactor[r,t,y] = 1
-    end end end
+    #for r ∈ Sets.Region_full
+       # for t ∈ Params.Tags.TagTechnologyToSubsets["ImportTechnology"]
+         #   for y ∈ Sets.Year
+               # Params.AvailabilityFactor[r,t,y] = 1
+    #end end end
 
     for r ∈ Sets.Region_full
         for t ∈ Sets.Technology
