@@ -697,7 +697,6 @@ struct SubsetsIni <: InputClass
     Companies ::Array
     HydrogenTechnologies ::Array
     DummyTechnology ::Array
-    Cooking :: Array
 end
 
 """
