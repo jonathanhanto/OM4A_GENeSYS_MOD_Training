@@ -44,7 +44,7 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
     base_name="UGANDA_UG_W_CHP_Biomass_Solid_2025_MaxCapacity")
 
     @constraint(model,
-    Vars.TotalCapacityAnnual[2025,"P_Oil","UG-E"] <= 0.0421,
+    Vars.TotalCapacityAnnual[2025,"P_Oil","UG-E"] <= 0.051,
     base_name="UGANDA_UG_E_P_Oil_2025_MaxCapacity")
 
     @constraint(model,
@@ -96,7 +96,7 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
     base_name="UGANDA_UG_W_CHP_Biomass_Solid_2030_MaxCapacity")
 
     @constraint(model,
-    Vars.TotalCapacityAnnual[2030,"P_Oil","UG-E"] <= 0.0421,
+    Vars.TotalCapacityAnnual[2030,"P_Oil","UG-E"] <= 0.051,
     base_name="UGANDA_UG_E_P_Oil_2030_MaxCapacity")
 
     @constraint(model,
@@ -176,7 +176,7 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
     base_name="UGANDA_UG_W_CHP_Biomass_Solid_2035_MaxCapacity")
 
     @constraint(model,
-    Vars.TotalCapacityAnnual[2035,"P_Oil","UG-E"] <= 0.0421,
+    Vars.TotalCapacityAnnual[2035,"P_Oil","UG-E"] <= 0.051,
     base_name="UGANDA_UG_E_P_Oil_2035_MaxCapacity")
 
     @constraint(model,
@@ -252,7 +252,7 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
     base_name="UGANDA_UG_W_CHP_Biomass_Solid_2040_MaxCapacity")
 
     @constraint(model,
-    Vars.TotalCapacityAnnual[2040,"P_Oil","UG-E"] <= 0.0421,
+    Vars.TotalCapacityAnnual[2040,"P_Oil","UG-E"] <= 0.051,
     base_name="UGANDA_UG_E_P_Oil_2040_MaxCapacity")
 
     @constraint(model,
