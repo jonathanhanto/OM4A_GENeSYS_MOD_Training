@@ -37,7 +37,7 @@ function genesysmod(;elmod_daystep, elmod_hourstep, solver, DNLPsolver, year=201
     employment_data_file = "", elmod_nthhour = 0, elmod_starthour = 8,
     elmod_dunkelflaute = 0, switch_raw_results = NoRawResult(), switch_processed_results = 0, write_reduced_timeserie = 1, switch_LCOE_calc=0,
     switch_reserve=0,switch_base_year_bounds_debugging=0,
-    extr_str_results = "inv_run", extr_str_dispatch="dispatch_run",switch_cooking=0, switch_iis=0)
+    extr_str_results = "inv_run", extr_str_dispatch="dispatch_run",switch_cooking=0, switch_iis=0, switch_scenario_1=0)
 
     if elmod_nthhour != 0 && (elmod_daystep !=0 || elmod_hourstep !=0)
         @warn "Both elmod_nthhour and elmod_daystep/elmod_hourstep are defined.
@@ -107,7 +107,8 @@ function genesysmod(;elmod_daystep, elmod_hourstep, solver, DNLPsolver, year=201
     extr_str_dispatch,
     switch_reserve,
     switch_cooking,
-    switch_iis)
+    switch_iis,
+    switch_scenario_1)
 
     starttime= Dates.now()
     model= JuMP.Model()
@@ -137,7 +138,7 @@ function genesysmod(;elmod_daystep, elmod_hourstep, solver, DNLPsolver, year=201
     # ####### Including Scenario Data #############
     #
 
-    genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
+    genesysmod_scenariodata(model, Sets, Params, Vars, Settings, switch)
     #
     # ####### Including Equations #############
     #

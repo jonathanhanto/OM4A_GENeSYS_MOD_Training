@@ -819,6 +819,7 @@ struct Switch <: InputClass
     switch_reserve ::Int16
     switch_cooking ::Int8
     switch_iis ::Int8
+    switch_scenario_1 :: Int8
 end
 
 """

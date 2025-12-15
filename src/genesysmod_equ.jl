@@ -818,7 +818,7 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps; 
     base_name="RE2_AnnualREProductionLowerLimit|$(𝓨[i])|$(r)|$(f)")
 
     if Switch.switch_dispatch isa NoDispatch
-      if 𝓨[i]> Switch.StartYear && Params.SpecifiedAnnualDemand[r,f,𝓨[i]]>0 && Params.SpecifiedAnnualDemand[r,f,𝓨[i-1]]>0
+      if 𝓨[i]> 2035 && Params.SpecifiedAnnualDemand[r,f,𝓨[i]]>0 && Params.SpecifiedAnnualDemand[r,f,𝓨[i-1]]>0
         @constraint(model,
         Vars.TotalREProductionAnnual[𝓨[i],r,f] >= Vars.TotalREProductionAnnual[𝓨[i-1],r,f]*((Params.SpecifiedAnnualDemand[r,f,𝓨[i]]/Params.SpecifiedAnnualDemand[r,f,𝓨[i-1]])),
         base_name="RE3_RETargetPath|$(𝓨[i])|$(r)|$(f)")
