@@ -80,10 +80,6 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
     base_name="UGANDA_UG_C_P_Oil_2030_MaxCapacity")
 
     @constraint(model,
-    Vars.TotalCapacityAnnual[2030,"P_Oil","UG-C"] <= 0.051,
-    base_name="UGANDA_UG_C_P_Oil_2030_MaxCapacity")
-
-    @constraint(model,
     Vars.TotalCapacityAnnual[2030,"RES_PV_Utility_Avg","UG-C"] <= 0.041,
     base_name="UGANDA_UG_C_RES_PV_Utility_Avg_2030_MaxCapacity")
 
