@@ -24,56 +24,8 @@ Internal function used in the run process to set run settings such as dicount ra
 function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
   if Switch.switch_scenario_1 == 1
     @constraint(model,
-    Vars.TotalCapacityAnnual[2025,"P_Oil","UG-C"] <= 0.051,
-    base_name="UGANDA_UG_C_P_Oil_2025_MaxCapacity")
-
-    @constraint(model,
-    Vars.TotalCapacityAnnual[2025,"RES_PV_Utility_Avg","UG-C"] <= 0.041,
-    base_name="UGANDA_UG_C_RES_PV_Utility_Avg_2025_MaxCapacity")
-
-    @constraint(model,
-    Vars.TotalCapacityAnnual[2025,"CHP_Biomass_Solid","UG-C"] <= 0.0421,
-    base_name="UGANDA_UG_C_CHP_Biomass_Solid_2025_MaxCapacity")
-
-    @constraint(model,
-    Vars.TotalCapacityAnnual[2025,"RES_Hydro_Small","UG-W"] <= 0.1784,
-    base_name="UGANDA_UG_W_RES_Hydro_Small_2025_MaxCapacity")
-
-    @constraint(model,
-    Vars.TotalCapacityAnnual[2025,"CHP_Biomass_Solid","UG-W"] <= 0.0346,
-    base_name="UGANDA_UG_W_CHP_Biomass_Solid_2025_MaxCapacity")
-
-    @constraint(model,
-    Vars.TotalCapacityAnnual[2025,"P_Oil","UG-E"] <= 0.051,
-    base_name="UGANDA_UG_E_P_Oil_2025_MaxCapacity")
-
-    @constraint(model,
-    Vars.TotalCapacityAnnual[2025,"RES_Hydro_Large","UG-E"] <= 0.8131,
-    base_name="UGANDA_UG_E_RES_Hydro_Large_2025_MaxCapacity")
-
-    @constraint(model,
-    Vars.TotalCapacityAnnual[2025,"RES_Hydro_Small","UG-E"] <= 0.02841,
-    base_name="UGANDA_UG_E_RES_Hydro_Small_2025_MaxCapacity")
-
-    @constraint(model,
-    Vars.TotalCapacityAnnual[2025,"RES_PV_Utility_Avg","UG-E"] <= 0.0441,
-    base_name="UGANDA_UG_E_RES_PV_Utility_Avg_2025_MaxCapacity")
-
-    @constraint(model,
-    Vars.TotalCapacityAnnual[2025,"CHP_Biomass_Solid","UG-E"] <= 0.0861,
-    base_name="UGANDA_UG_E_CHP_Biomass_Solid_2025_MaxCapacity")
-
-    @constraint(model,
-    Vars.TotalCapacityAnnual[2025,"RES_Hydro_Small","UG-N"] <= 0.01011,
-    base_name="UGANDA_UG_N_RES_Hydro_Small_2025_MaxCapacity")
-
-    @constraint(model,
-    Vars.TotalCapacityAnnual[2025,"RES_Hydro_Large","UG-N"] <= 0.687211,
-    base_name="UGANDA_UG_N_RES_Hydro_Large_2025_MaxCapacity")
-
-    @constraint(model,
-    Vars.TotalCapacityAnnual[2025,"RES_PV_Utility_Avg","UG-N"] <= 0.0211,
-    base_name="UGANDA_UG_N_RES_PV_Utility_Avg_2025_MaxCapacity")
+    Vars.TotalCapacityAnnual[2030,"P_Gas_CCGT","UG-C"] == 0,
+    base_name="UGANDA_UG_C_P_Gas_CCGT_2030_MaxCapacity")
 
     @constraint(model,
     Vars.TotalCapacityAnnual[2030,"P_Oil","UG-C"] <= 0.051,
@@ -152,6 +104,18 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
     base_name="UGANDA_UG_W_RES_Geothermal_2030_MaxCapacity")
 
     @constraint(model,
+    Vars.TotalCapacityAnnual[2035,"P_Gas_CCGT","UG-C"] == 0,
+    base_name="UGANDA_UG_C_P_Gas_CCGT_2035_MaxCapacity")
+
+    @constraint(model,
+    Vars.TotalCapacityAnnual[2035,"P_Gas_CCGT","UG-E"] == 0,
+    base_name="UGANDA_UG_E_P_Gas_CCGT_2035_MaxCapacity")
+
+    @constraint(model,
+    Vars.TotalCapacityAnnual[2035,"P_Gas_CCGT","UG-N"] == 0,
+    base_name="UGANDA_UG_N_P_Gas_CCGT_2035_MaxCapacity")
+
+    @constraint(model,
     Vars.TotalCapacityAnnual[2035,"P_Oil","UG-C"] <= 0.051,
     base_name="UGANDA_UG_C_P_Oil_2035_MaxCapacity")
 
@@ -226,6 +190,18 @@ function genesysmod_scenariodata(model, Sets, Params, Vars, Settings, Switch)
     @constraint(model,
     Vars.TotalCapacityAnnual[2035,"RES_Hydro_Small","UG-C"] <= 0.0006931,
     base_name="UGANDA_UG_C_RES_Hydro_Small_2035_MaxCapacity")
+
+    @constraint(model,
+    Vars.TotalCapacityAnnual[2040,"P_Gas_CCGT","UG-C"] == 0,
+    base_name="UGANDA_UG_C_P_Gas_CCGT_2040_MaxCapacity")
+
+    @constraint(model,
+    Vars.TotalCapacityAnnual[2040,"P_Gas_CCGT","UG-E"] == 0,
+    base_name="UGANDA_UG_E_P_Gas_CCGT_2040_MaxCapacity")
+
+    @constraint(model,
+    Vars.TotalCapacityAnnual[2040,"P_Gas_CCGT","UG-N"] == 0,
+    base_name="UGANDA_UG_N_P_Gas_CCGT_2040_MaxCapacity")
 
     @constraint(model,
     Vars.TotalCapacityAnnual[2040,"P_Oil","UG-C"] <= 0.051,
