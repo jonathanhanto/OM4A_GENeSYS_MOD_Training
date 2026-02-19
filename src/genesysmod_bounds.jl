@@ -130,11 +130,11 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
             end
     end end
 
-    for r ∈ Sets.Region_full
-        for t ∈ Params.Tags.TagTechnologyToSubsets["ImportTechnology"]
-            for y ∈ Sets.Year
-                Params.AvailabilityFactor[r,t,y] = 1
-    end end end
+   # for r ∈ Sets.Region_full
+    #    for t ∈ Params.Tags.TagTechnologyToSubsets["ImportTechnology"]
+     #       for y ∈ Sets.Year
+      #          Params.AvailabilityFactor[r,t,y] = 1
+    #end end end
 
     for r ∈ Sets.Region_full
         for t ∈ Sets.Technology
@@ -176,7 +176,7 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
     #
     if Switch.switch_dispatch == NoDispatch()
         for r ∈ Sets.Region_full
-            for t ∈ intersect(Sets.Technology, vcat(Params.Tags.TagTechnologyToSubsets["Transformation"],Params.Tags.TagTechnologyToSubsets["PowerSupply"], Params.Tags.TagTechnologyToSubsets["SectorCoupling"], Params.Tags.TagTechnologyToSubsets["StorageDummies"], Params.Tags.TagTechnologyToSubsets["Transport"], Params.Tags.TagTechnologyToSubsets["CHP"]))
+            for t ∈ intersect(Sets.Technology, vcat(#=Params.Tags.TagTechnologyToSubsets["Transformation"],=#Params.Tags.TagTechnologyToSubsets["PowerSupply"], Params.Tags.TagTechnologyToSubsets["SectorCoupling"], Params.Tags.TagTechnologyToSubsets["StorageDummies"], #=Params.Tags.TagTechnologyToSubsets["Transport"], =# Params.Tags.TagTechnologyToSubsets["CHP"]))
                 JuMP.fix(Vars.NewCapacity[Switch.StartYear,t,r],0; force=true)
             end
             for t ∈ intersect(Sets.Technology, vcat(Params.Tags.TagTechnologyToSubsets["Biomass"],["HLR_Gas_Boiler","HLI_Gas_Boiler","HHI_BF_BOF",
