@@ -140,12 +140,12 @@ end
 
 function add_extras_sets!(Technology, Storage, s_infeas::WithInfeasibilityTechs, s_dispatch)
     append!(Technology, ["Infeasibility_Power", "Infeasibility_HLI", "Infeasibility_HMI",
-    "Infeasibility_HHI", "Infeasibility_HRI", "Infeasibility_Mob_Passenger", "Infeasibility_Mob_Freight"])
+    "Infeasibility_HHI", "Infeasibility_HRI", "Infeasibility_Mob_Passenger", "Infeasibility_Mob_Freight","Infeasibility_Cooking"])
 end
 
 function add_extras_sets!(Technology, Storage, s_infeas::WithInfeasibilityTechs, s_dispatch::OneNodeStorage)
     append!(Technology, ["Infeasibility_Power", "Infeasibility_HLI", "Infeasibility_HMI",
-    "Infeasibility_HHI", "Infeasibility_HRI", "Infeasibility_Mob_Passenger", "Infeasibility_Mob_Freight","D_Trade_Storage_Power"])
+    "Infeasibility_HHI", "Infeasibility_HRI", "Infeasibility_Mob_Passenger", "Infeasibility_Mob_Freight","D_Trade_Storage_Power","Infeasibility_Cooking"])
     push!(Storage,"S_Trade_Storage_Power")
 end
 
@@ -194,13 +194,13 @@ end
 
 function add_extras_tags!(tags::Tags, sets, s_infeas::WithInfeasibilityTechs, s_dispatch)
     tags.TagTechnologyToSubsets["DummyTechnology"] = intersect(sets.Technology,["Infeasibility_Power", "Infeasibility_HLI", "Infeasibility_HMI",
-    "Infeasibility_HHI", "Infeasibility_HRI", "Infeasibility_Mob_Passenger", "Infeasibility_Mob_Freight"])
+    "Infeasibility_HHI", "Infeasibility_HRI", "Infeasibility_Mob_Passenger", "Infeasibility_Mob_Freight","Infeasibility_Cooking"])
 end
 
 function add_extras_tags!(tags::Tags, sets, s_infeas::WithInfeasibilityTechs, s_dispatch::OneNodeStorage)
     tags.TagTechnologyToSubsets["DummyTechnology"] = intersect(sets.Technology,["Infeasibility_Power", "Infeasibility_HLI", "Infeasibility_HMI",
     "Infeasibility_HHI", "Infeasibility_HRI", "Infeasibility_Mob_Passenger", "Infeasibility_Mob_Freight", "D_Trade_Storage_Power"])
-    push!(tags.TagTechnologyToSubsets["StorageDummies"], "D_Trade_Storage_Power")
+    push!(tags.TagTechnologyToSubsets["StorageDummies"], "D_Trade_Storage_Power","Infeasibility_Cooking")
 end
 
 function update_inftechs_params!(Params, s_infeas, s_dispatch)
@@ -217,6 +217,7 @@ function update_inftechs_params!(Params, s_infeas::WithInfeasibilityTechs, s_dis
     Params.OutputActivityRatio[:,"Infeasibility_Power","Power",1,:] .= 1
     Params.OutputActivityRatio[:,"Infeasibility_Mob_Passenger","Mobility_Passenger",1,:] .= 1
     Params.OutputActivityRatio[:,"Infeasibility_Mob_Freight","Mobility_Freight",1,:] .= 1
+    Params.OutputActivityRatio[:,"Infeasibility_Cooking","Cooking",1,:] .= 1
 
     Params.CapacityToActivityUnit[Params.Tags.TagTechnologyToSubsets["DummyTechnology"]] .= 31.56
     Params.TotalAnnualMaxCapacity[:,Params.Tags.TagTechnologyToSubsets["DummyTechnology"],:] .= 999999
@@ -247,6 +248,7 @@ function update_inftechs_params!(Params, s_infeas::WithInfeasibilityTechs, s_dis
     Params.OutputActivityRatio[:,"Infeasibility_Power","Power",1,:] .= 1
     Params.OutputActivityRatio[:,"Infeasibility_Mob_Passenger","Mobility_Passenger",1,:] .= 1
     Params.OutputActivityRatio[:,"Infeasibility_Mob_Freight","Mobility_Freight",1,:] .= 1
+    Params.OutputActivityRatio[:,"Infeasibility_Cooking","Cooking",1,:] .= 1
 
     Params.CapacityToActivityUnit[Params.Tags.TagTechnologyToSubsets["DummyTechnology"]] .= 31.56
     Params.TotalAnnualMaxCapacity[:,Params.Tags.TagTechnologyToSubsets["DummyTechnology"],:] .= 999999
