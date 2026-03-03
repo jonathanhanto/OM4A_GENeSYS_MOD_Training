@@ -22,10 +22,10 @@
 Run the whole model. It runs the whole process from input data reading to
 result processing. For information about the switches, refer to the datastructure documentation.
 """
-function genesysmod(;elmod_daystep, elmod_hourstep, solver, DNLPsolver, year=2018,
-    model_region="minimal", data_base_region="DE",
-    data_file="Data_Europe_openENTRANCE_technoFriendly_combined_v00_kl_21_03_2022_new",
-    hourly_data_file = "Hourly_Data_Europe_v09_kl_23_02_2022",
+function genesysmod(;elmod_daystep, elmod_hourstep, solver, DNLPsolver, year=2022,
+    model_region="minimal", data_base_region="TN-NE",
+    data_file="inputdata_Tunisia_2022_FV",
+    hourly_data_file = "Hourly_Data_Tunisia_2022_FV",
     threads=4, emissionPathway="MinimalExample", emissionScenario="globalLimit",
     socialdiscountrate=0.05,  inputdir="Inputdata\\", resultdir="Results\\",
     switch_infeasibility_tech = NoInfeasibilityTechs(), switch_investLimit=1, switch_ccs=0,

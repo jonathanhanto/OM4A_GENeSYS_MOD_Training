@@ -59,6 +59,7 @@ function genesysmod_levelizedcosts(model,Sets, Params, VarPar, Vars, Switch, Set
     "R_Coal_Lignite",
     "Z_Import_Oil",
     "Z_Import_Gas",
+    "Z_Import_Power",
     "R_Nuclear",
     "R_Gas",
     "R_Oil"]

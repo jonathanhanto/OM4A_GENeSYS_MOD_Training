@@ -1044,15 +1044,19 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps; 
         JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_SHIP_RE",l,r,"Mobility_Passenger",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_ROAD_RE",l,r,"Mobility_Passenger",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_RAIL_RE",l,r,"Mobility_Passenger",y], 0; force=true)
+        JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_AIR_RE",l,r,"Mobility_Passenger",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_SHIP_CONV",l,r,"Mobility_Passenger",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_ROAD_CONV",l,r,"Mobility_Passenger",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_RAIL_CONV",l,r,"Mobility_Passenger",y], 0; force=true)
+        JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_AIR_CONV",l,r,"Mobility_Passenger",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_AIR_RE",l,r,"Mobility_Freight",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_ROAD_RE",l,r,"Mobility_Freight",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_RAIL_RE",l,r,"Mobility_Freight",y], 0; force=true)
+        JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_SHIP_RE",l,r,"Mobility_Freight",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_AIR_CONV",l,r,"Mobility_Freight",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_ROAD_CONV",l,r,"Mobility_Freight",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_RAIL_CONV",l,r,"Mobility_Freight",y], 0; force=true)
+        JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_SHIP_CONV",l,r,"Mobility_Freight",y], 0; force=true)
       end end
     end
   else
@@ -1084,15 +1088,19 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps; 
         JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_SHIP_RE",l,r,"Mobility_Passenger",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_ROAD_RE",l,r,"Mobility_Passenger",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_RAIL_RE",l,r,"Mobility_Passenger",y], 0; force=true)
+        JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_AIR_RE",l,r,"Mobility_Passenger",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_SHIP_CONV",l,r,"Mobility_Passenger",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_ROAD_CONV",l,r,"Mobility_Passenger",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_RAIL_CONV",l,r,"Mobility_Passenger",y], 0; force=true)
+        JuMP.fix(Vars.ProductionSplitByModalType["MT_FRT_AIR_CONV",l,r,"Mobility_Passenger",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_AIR_RE",l,r,"Mobility_Freight",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_ROAD_RE",l,r,"Mobility_Freight",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_RAIL_RE",l,r,"Mobility_Freight",y], 0; force=true)
+        JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_SHIP_RE",l,r,"Mobility_Freight",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_AIR_CONV",l,r,"Mobility_Freight",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_ROAD_CONV",l,r,"Mobility_Freight",y], 0; force=true)
         JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_RAIL_CONV",l,r,"Mobility_Freight",y], 0; force=true)
+        JuMP.fix(Vars.ProductionSplitByModalType["MT_PSNG_SHIP_CONV",l,r,"Mobility_Freight",y], 0; force=true)
       end
     end end
   end

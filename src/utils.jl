@@ -66,58 +66,62 @@ values are intialized to 0. If copy world is true, the value for the region worl
 If inherit_base_world is 1, missing data will be fetched from the base region if they exist
 and again from the world region if necessary.
 """
-function create_daa(in_data::XLSX.XLSXFile, tab_name, els...;inherit_base_world=false,copy_world=false, base_region="TN-TN") # els contains the Sets, col_names is the name of the columns in the df as symbols
-    df = DataFrame(XLSX.gettable(in_data[tab_name];first_row=1))
-    # Initialize all combinations to zero:
-    A = JuMP.Containers.DenseAxisArray(
-        zeros(length.(els)...), els...)
-    # Fill in values from Excel
+function create_daa(in_data::XLSX.XLSXFile, tab_name, els...;
+                    inherit_base_world::Bool=false, copy_world::Bool=false, base_region::AbstractString="TN-NE")
+    df = DataFrame(XLSX.gettable(in_data[tab_name]; first_row=1))
+
+    # Use NaN as "missing" sentinel so explicit 0.0 from Excel is preserved
+    A = JuMP.Containers.DenseAxisArray(fill(NaN, length.(els)...), els...)
+
+    # Fill values from Excel (zeros remain zeros; not treated as missing)
     for r in eachrow(df)
         try
-            A[r[1:end-1]...] = r.Value 
+            A[r[1:end-1]...] = r.Value
         catch err
             @debug err
         end
     end
-    # Fill other values using base region
+
+    # Inherit only where truly missing
     if inherit_base_world
         for x in Base.Iterators.product(els...)
-            if A[x...] == 0.0
-                if A[base_region, x[2:end]...] != 0.0
-                    A[x...] = A[base_region, x[2:end]...]
-                elseif A["World", x[2:end]...] != 0.0
-                    A[x...] = A["World", x[2:end]...]
+            if isnan(A[x...])
+                vbase  = A[base_region, x[2:end]...]
+                vworld = A["World",    x[2:end]...]
+                if !isnan(vbase)
+                    A[x...] = vbase
+                elseif !isnan(vworld)
+                    A[x...] = vworld
                 end
             end
         end
     end
+
     if copy_world
         for x in Base.Iterators.product(els...)
             A[x...] = A["World", x[2:end]...]
         end
     end
-    #if tab_name == "Par_CapacityToActivityUnit"
-        #for x in Base.Iterators.product(els...)
-            #if A[base_region, x[2:end]...] != 0.0
-            #    A[x...] = A[base_region, x[2:end]...]
-            #elseif A["World", x[2:end]...] != 0.0
-            #    A[x...] = A["World", x[2:end]...]
-            #else
-            #    A[x...] = 0.0
-            #end
-        #end
-    #end
+
+    # Special rule unchanged
     if tab_name == "Par_EmissionsPenalty"
         for x in Base.Iterators.product(els...)
-            if A[base_region, x[2:end]...] != 0.0
-                A[x...] = A[base_region, x[2:end]...]
-            else
-                A[x...] = 0.0
-            end
+            vbase = A[base_region, x[2:end]...]
+            A[x...] = !isnan(vbase) ? vbase : 0.0
         end
     end
+
+    # FINAL SAFETY: replace any remaining NaN with 0.0 so JuMP never sees NaN
+    for x in Base.Iterators.product(els...)
+        if isnan(A[x...])
+            A[x...] = 0.0
+        end
+    end
+
     return A
 end
+
+
 
 function read_subsets(in_data::XLSX.XLSXFile, tab_name) 
     df = DataFrame(XLSX.gettable(in_data[tab_name];first_row=1))
@@ -165,7 +169,7 @@ end
 """
 Create dense axis array initialized at a given value. 
 """
-function create_daa_init(in_data, tab_name,init_value=0, els...;inherit_base_world=false,copy_world=false, base_region="UG-C") # els contains the Sets, col_names is the name of the columns in the df as symbols
+function create_daa_init(in_data, tab_name,init_value=0, els...;inherit_base_world=false,copy_world=false, base_region="TN-NE") # els contains the Sets, col_names is the name of the columns in the df as symbols
     df = DataFrame(XLSX.gettable(in_data[tab_name];first_row=1))
     # Initialize all combinations to zero:
     A = JuMP.Containers.DenseAxisArray(

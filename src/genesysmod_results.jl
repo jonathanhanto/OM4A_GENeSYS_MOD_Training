@@ -73,6 +73,7 @@ function genesysmod_results(model,Sets, Params, VarPar, Vars, Switch, Settings, 
         z_fuelcosts["Nuclear",y,r] = Params.VariableCost[r,"R_Nuclear",1,y]
         z_fuelcosts["Biomass",y,r] = sum(Params.VariableCost[r,f,1,y] for f ∈ Params.Tags.TagTechnologyToSubsets["Biomass"])/length(Params.Tags.TagTechnologyToSubsets["Biomass"])
         z_fuelcosts["Gas_Natural",y,r] = Params.VariableCost[r,"Z_Import_Gas",1,y]
+        z_fuelcosts["Power",y,r] = Params.VariableCost[r,"Z_Import_Power",1,y]
         z_fuelcosts["Oil",y,r] = Params.VariableCost[r,"Z_Import_Oil",1,y]
         z_fuelcosts["H2",y,r] = Params.VariableCost[r,"Z_Import_H2",1,y]
     end end

@@ -231,9 +231,11 @@ function update_inftechs_params!(Params, s_infeas::WithInfeasibilityTechs, s_dis
     Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Passenger",1,"MT_PSNG_ROAD"] .= 1
     Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Passenger",1,"MT_PSNG_RAIL"] .= 1
     Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Passenger",1,"MT_PSNG_AIR"] .= 1
+    Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Passenger",1,"MT_PSNG_SHIP"] .= 1
     Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Freight",1,"MT_FRT_ROAD"] .= 1
     Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Freight",1,"MT_FRT_RAIL"] .= 1
     Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Freight",1,"MT_FRT_SHIP"] .= 1
+    Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Freight",1,"MT_FRT_AIR"] .= 1
 end
 
 function update_inftechs_params!(Params, s_infeas::WithInfeasibilityTechs, s_dispatch::OneNodeStorage)
@@ -261,9 +263,11 @@ function update_inftechs_params!(Params, s_infeas::WithInfeasibilityTechs, s_dis
     Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Passenger",1,"MT_PSNG_ROAD"] .= 1
     Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Passenger",1,"MT_PSNG_RAIL"] .= 1
     Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Passenger",1,"MT_PSNG_AIR"] .= 1
+    Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Passenger",1,"MT_PSNG_SHIP"] .= 1
     Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Freight",1,"MT_FRT_ROAD"] .= 1
     Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Freight",1,"MT_FRT_RAIL"] .= 1
     Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Freight",1,"MT_FRT_SHIP"] .= 1
+    Params.Tags.TagTechnologyToModalType["Infeasibility_Mob_Freight",1,"MT_FRT_AIR"] .= 1
 
     Params.OutputActivityRatio[:,"D_Trade_Storage_Power","Power",2,:] .= 1
     Params.InputActivityRatio[:,"D_Trade_Storage_Power","Power",1,:] .= 1
