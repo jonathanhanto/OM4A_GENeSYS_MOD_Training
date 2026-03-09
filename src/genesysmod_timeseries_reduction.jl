@@ -336,7 +336,7 @@ function timeseries_reduction!(Params, Sets, Switch)
         for r ∈ Sets.Region_full
             for f ∈ Sets.Fuel
                 for y ∈ Sets.Year
-                    if sum(Params.SpecifiedAnnualDemand[r, f, y]) != 0
+                    if sum(Params.SpecifiedAnnualDemand[r, f, :]) != 0
                         # Normalize over all timeslices
                         total_load = sum(ScaledCountryData["LOAD"][l, r] for l in Sets.Timeslice)
                         for l ∈ Sets.Timeslice
