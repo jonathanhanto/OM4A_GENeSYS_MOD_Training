@@ -58,6 +58,7 @@ function genesysmod_settings(Sets, Params, socialdiscountrate)
     BaseYearSlack = JuMP.Containers.DenseAxisArray(zeros(length(Sets.Fuel)), Sets.Fuel)
     BaseYearSlack[Sets.Fuel] .= 0.035
     BaseYearSlack["Power"] = 0.035
+    BaseYearSlack["Cooking"] = 0.035
 
     PhaseOut = Dict(2020=>3, 2025=>3, 2030=>3, 2035=>2.5, 2040=>2.5 ,2045=>2, 2050=>2)# this is an upper limit for fossil generation based on the previous year - to remove choose large value
 

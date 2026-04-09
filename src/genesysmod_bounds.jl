@@ -94,7 +94,8 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
             "Infeasibility_HRI" => "Heat_Low_Residential",
             "Infeasibility_Power" => "Power",
             "Infeasibility_Mob_Passenger" => "Mobility_Passenger",
-            "Infeasibility_Mob_Freight" => "Mobility_Freight")
+            "Infeasibility_Mob_Freight" => "Mobility_Freight",
+            "Infeasibility_Cooking" => "Cooking")
 
         for (k,v) ∈ output_activity_dict
             try
@@ -176,7 +177,7 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
     #
     if Switch.switch_dispatch == NoDispatch()
         for r ∈ Sets.Region_full
-            for t ∈ intersect(Sets.Technology, vcat(Params.Tags.TagTechnologyToSubsets["Transformation"],Params.Tags.TagTechnologyToSubsets["PowerSupply"], Params.Tags.TagTechnologyToSubsets["SectorCoupling"], Params.Tags.TagTechnologyToSubsets["StorageDummies"], Params.Tags.TagTechnologyToSubsets["Transport"],  Params.Tags.TagTechnologyToSubsets["CHP"]))
+            for t ∈ intersect(Sets.Technology, vcat(Params.Tags.TagTechnologyToSubsets["Cooking"],Params.Tags.TagTechnologyToSubsets["Transformation"],Params.Tags.TagTechnologyToSubsets["PowerSupply"], Params.Tags.TagTechnologyToSubsets["SectorCoupling"], Params.Tags.TagTechnologyToSubsets["StorageDummies"], Params.Tags.TagTechnologyToSubsets["Transport"],  Params.Tags.TagTechnologyToSubsets["CHP"]))
                 JuMP.fix(Vars.NewCapacity[Switch.StartYear,t,r],0; force=true)
             end
             for t ∈ intersect(Sets.Technology, vcat(Params.Tags.TagTechnologyToSubsets["Biomass"],["D_Gas_Methane"]))
