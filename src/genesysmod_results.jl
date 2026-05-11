@@ -39,7 +39,9 @@ end
 
 function resourcecosts_from_duals(model, Sets, Switch, Settings, extr_str)
     df_duals = genesysmod_getdualsbyname(model,Switch,extr_str, "EB2_EnergyBalanceEachTS")
+    df_duals_time_independent = genesysmod_getdualsbyname(model,Switch,extr_str, "EB3_EnergyBalanceEachYear")
 
+    # process time dependant fuels
     cols = [:constraint_type, :year, :timestep, :fuel, :region]
     transform!(df_duals, :names => ByRow(x -> split(x, '|')) => cols)
 
@@ -48,6 +50,21 @@ function resourcecosts_from_duals(model, Sets, Switch, Settings, extr_str)
     df_duals=combine(groupby(df_duals, [:region, :fuel, :year]), :values => mean => :y)
 
     df_duals.year = parse.(Int64,df_duals.year)
+
+    #process time independant fuels
+    if !isempty(df_duals_time_independent)
+        cols = [:constraint_type, :year, :fuel, :region]
+        transform!(df_duals_time_independent, :names => ByRow(x -> split(x, '|')) => cols)
+        rename!(df_duals_time_independent, :values => :y)
+
+        select!(df_duals_time_independent, Not(:names,:constraint_type))
+        select!(df_duals_time_independent, [:region, :fuel, :year, :y])
+
+        df_duals_time_independent.year = parse.(Int64,df_duals_time_independent.year)
+
+        #merge dfs
+        df_duals = vcat(df_duals, df_duals_time_independent)
+    end
 
     resourcecosts = create_daa(df_duals,"", Sets.Region_full, Sets.Fuel,  Sets.Year)
     return resourcecosts
