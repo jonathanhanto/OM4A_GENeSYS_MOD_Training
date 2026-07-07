@@ -42,9 +42,18 @@ include("genesysmod_results.jl")
 include("genesysmod_levelizedcosts.jl")
 include("genesysmod_emissionintensity.jl")
 include("genesysmod_dispatch.jl")
+# Multi-objective (cost vs. social acceptance) add-on — optional, dockable.
+# Only active when `genesysmod_augmecon(...)` is called; the single-objective
+# path above is untouched.
+include("genesysmod_acceptance.jl")
+include("genesysmod_augmecon.jl")
+# Auto-include every genesysmod_scenariodata_<region>.jl (defines module ScenarioData<Region>,
+# dispatched by genesysmod_main.jl for the matching model_region). NB: adding a NEW such file
+# requires a content change here (or a clean precompile) so Julia re-runs this dynamic include.
 include.(filter(f-> occursin(r".jl$",f) && occursin("scenariodata",f), readdir(joinpath(pkgdir(GENeSYSMOD,"src")))))
 
 export genesysmod, genesysmod_dispatch
+export genesysmod_augmecon
 export genesysmod_build_model, genesysmod_build_model_dispatch
 export NoInfeasibilityTechs, WithInfeasibilityTechs # for use with the switch infeasibility_techs
 export OneNodeSimple, TwoNodes, OneNodeStorage

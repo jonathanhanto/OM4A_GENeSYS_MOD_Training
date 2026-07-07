@@ -41,7 +41,7 @@ function genesysmod_settings(Sets, Params, socialdiscountrate)
 
     PhaseOut = Dict(2020=>3, 2025=>3, 2030=>3, 2035=>2.5, 2040=>2.5 ,2045=>2, 2050=>2 ,2055=>1.5, 2060=>1.25)# this is an upper limit for fossil generation based on the previous year - to remove choose large value
 
-    PhaseIn = Dict(2020=>1, 2025=>0.8, 2030=>0.8, 2035=>0.8, 2040=>0.8, 2045=>0.8, 2050=>0.6, 2055=>0.5, 2060=>0.5) # this is a lower bound for renewable integration based on the previous year - to remove choose 0
+    PhaseIn = Dict(2020=>1, 2025=>0.8, 2030=>0.7, 2035=>0.7, 2040=>0.7, 2045=>0.6, 2050=>0.5, 2055=>0.5, 2060=>0.5) # lower bound for renewable integration based on the previous year - to remove choose 0. Values match the GAMS reference (genesysmod_settings.gms PhaseIn: 2025=.8,2030=.7,2035=.7,2040=.7,2045=.6,2050=.5). The earlier 0.8-flat-to-2045 was a port error: it over-tightened SC3_SmoothingRenewableIntegration so a base-year renewable floor propagated forward (Prod[y]>=Prod[y-1]*PhaseIn*demandratio) into the later-year TotalAnnualMaxCapacity cap and made base-year onshore floors infeasible under switch_base_year_bounds=1.
 
     #StorageLevelYearStartUpperLimit = Switch.set_storagelevelstart_up
     #StorageLevelYearStartLowerLimit = Switch.set_storagelevelstart_down

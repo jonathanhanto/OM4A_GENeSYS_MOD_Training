@@ -167,16 +167,31 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
     # ####### No new capacity construction in 2015 #############
     #
     if Switch.switch_dispatch isa NoDispatch
+        # Base-year (start year) new-capacity construction. Mirrors GAMS
+        # genesysmod_bounds.gms:137-158: block construction ONLY for the four
+        # subsets below, then explicitly re-allow it for the techs that society
+        # actually built/extended in the base year (CHP, steel, boilers, heat
+        # pumps, biomass, …). The earlier Julia port additionally fixed CHP and
+        # Transport to 0 and dropped the GAMS re-allowances, which made base-year
+        # demand for those techs infeasible whenever the residual fleet alone
+        # could not cover it (CHP_Biomass_Solid, HHI_BF_BOF, FRT_* …).
+        reallow = intersect(Sets.Technology, vcat(
+            Params.Tags.TagTechnologyToSubsets["Biomass"],
+            Params.Tags.TagTechnologyToSubsets["CHP"],
+            ["HLR_Gas_Boiler", "HLI_Gas_Boiler", "HHI_BF_BOF", "HHI_Bio_BF_BOF",
+             "HHI_Scrap_EAF", "HHI_DRI_EAF", "D_Gas_Methane", "HLR_Hardcoal",
+             "HLR_Heatpump_Ground", "HLI_Hardcoal", "HLR_Biomass", "CHP_Biomass_Solid",
+             "X_SMR"]))
         for r ∈ Sets.Region_full
             for t ∈ intersect(Sets.Technology, vcat(Params.Tags.TagTechnologyToSubsets["Transformation"],
                 Params.Tags.TagTechnologyToSubsets["PowerSupply"], Params.Tags.TagTechnologyToSubsets["SectorCoupling"],
-                Params.Tags.TagTechnologyToSubsets["StorageDummies"], Params.Tags.TagTechnologyToSubsets["CHP"],
-                Params.Tags.TagTechnologyToSubsets["Transport"]))
+                Params.Tags.TagTechnologyToSubsets["StorageDummies"]))
                 JuMP.fix(Vars.NewCapacity[Switch.StartYear,t,r],0; force=true)
             end
-            for t ∈ intersect(Sets.Technology, vcat(Params.Tags.TagTechnologyToSubsets["Biomass"],["D_Gas_Methane", "X_SMR"]))
+            for t ∈ reallow
                 if JuMP.is_fixed(Vars.NewCapacity[Switch.StartYear,t,r])
                     JuMP.unfix(Vars.NewCapacity[Switch.StartYear,t,r])
+                    set_lower_bound(Vars.NewCapacity[Switch.StartYear,t,r], 0)
                 end
             end
         end
@@ -333,8 +348,16 @@ function genesysmod_bounds(model,Sets,Params, Vars,Settings,Switch,Maps)
 
     for r ∈ Sets.Region_full for i ∈ 1:length(Sets.Timeslice) for y ∈ Sets.Year
         if Switch.switch_dispatch isa NoDispatch
-            for s in intersect(Sets.Storage, ["S_Battery_Li-Ion","S_Battery_Redox","S_Heat_HB_Tank_Small", "S_Heat_HLI_Tank_Large", "S_CAES"])
+            # Intraday storages reset every 24h; S_CAES every 48h (GAMS bounds.gms:103-107).
+            # S_Heat_HLR/S_Heat_HLI are the DE dataset names (the reference resets exactly these);
+            # S_Heat_HB_Tank_Small/S_Heat_HLI_Tank_Large kept for the Europe-style datasets.
+            for s in intersect(Sets.Storage, ["S_Battery_Li-Ion","S_Battery_Redox","S_Heat_HB_Tank_Small", "S_Heat_HLI_Tank_Large", "S_Heat_HLR", "S_Heat_HLI"])
                 if (i-1 + Switch.elmod_starthour/Switch.elmod_hourstep) % (24/Switch.elmod_hourstep) == 0
+                    JuMP.fix(Vars.StorageLevelTSStart[s,y,Sets.Timeslice[i],r], 0; force = true)
+                end
+            end
+            for s in intersect(Sets.Storage, ["S_CAES"])
+                if (i-1 + Switch.elmod_starthour/Switch.elmod_hourstep) % (48/Switch.elmod_hourstep) == 0
                     JuMP.fix(Vars.StorageLevelTSStart[s,y,Sets.Timeslice[i],r], 0; force = true)
                 end
             end

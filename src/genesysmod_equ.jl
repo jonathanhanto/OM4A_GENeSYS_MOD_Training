@@ -970,6 +970,11 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps; 
         end
     end
   end end end
+  # NB RE1/RE2/RE3 are dead here (REMinProductionTarget empty) → the DE 80% power-RE / 50% heat-RE
+  # mandates are toothless (TotalREProductionAnnual free). Fixing that (RE1 unconditional) was tried
+  # 2026-07-05: it makes the mandates bite (83% power RE) but does NOT move z/CO2/slope closer to
+  # GAMS (slope 0.313→0.317), so per the data-first principle it was reverted. The slope gap
+  # (0.31 vs GAMS 0.20) is in the zAcc acceptance formulation, not the RE constraints — see §7.
   print("Cstr: RE target : ",Dates.now()-start,"\n")
 
   ################ Emissions Accounting ##############
