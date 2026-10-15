@@ -561,6 +561,25 @@ function genesysmod_equ(model,Sets,Params, Vars,Emp_Sets,Settings,Switch, Maps; 
 
   print("Cstr: Acc. Tech. 1 : ",Dates.now()-start,"\n")
 
+    if Switch.switch_cooking == 1
+    start=Dates.now()
+    𝓒 = intersect(𝓣, Params.Tags.TagTechnologyToSubsets["Cooking"])
+    # Skip the base year: residual cookstove capacities are calibrated on annual energy,
+    # not on peak demand, so a shape constraint conflicts with BYB base-year bounds.
+    for y ∈ setdiff(𝓨, [Switch.StartYear]), r ∈ 𝓡
+      annual_demand = sum(Params.Demand[y,l,"Cooking",r] for l ∈ 𝓛)
+      if annual_demand > 0
+        for t ∈ 𝓒, l ∈ 𝓛
+          @constraint(model,
+            sum(Vars.RateOfActivity[y,l,t,m,r]*Params.OutputActivityRatio[r,t,"Cooking",m,y] for m ∈ Maps.Tech_MO[t]) * Params.YearSplit[l,y] * annual_demand
+            == Vars.ProductionByTechnologyAnnual[y,t,"Cooking",r] * Params.Demand[y,l,"Cooking",r],
+            base_name="CK1_ConstantCookingShare|$(y)|$(l)|$(t)|$(r)")
+        end
+      end
+    end
+    print("Cstr: Cooking Share : ",Dates.now()-start,"\n")
+  end
+
   ############### Capital Costs #############
 
   start=Dates.now()
